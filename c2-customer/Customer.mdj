@@ -1,0 +1,894 @@
+{
+	"_type": "Project",
+	"_id": "AAAAAAFF+h6SjaM2Hec=",
+	"name": "se1.bestellsystem",
+	"ownedElements": [
+		{
+			"_type": "UMLModel",
+			"_id": "AAAAAAFF+qBWK6M3Z8Y=",
+			"_parent": {
+				"$ref": "AAAAAAFF+h6SjaM2Hec="
+			},
+			"name": "datamodel",
+			"ownedElements": [
+				{
+					"_type": "UMLClassDiagram",
+					"_id": "AAAAAAGPScxWaCobEeA=",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "Class Diagram Customer",
+					"ownedViews": [
+						{
+							"_type": "UMLClassView",
+							"_id": "AAAAAAGPSc1gDSsyEms=",
+							"_parent": {
+								"$ref": "AAAAAAGPScxWaCobEeA="
+							},
+							"model": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"subViews": [
+								{
+									"_type": "UMLNameCompartmentView",
+									"_id": "AAAAAAGPSc1gDSszsx0=",
+									"_parent": {
+										"$ref": "AAAAAAGPSc1gDSsyEms="
+									},
+									"model": {
+										"$ref": "AAAAAAGPSc1gDSsw1wU="
+									},
+									"subViews": [
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAGPSc1gDSs0ouI=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSszsx0="
+											},
+											"visible": false,
+											"font": "Arial;13;0",
+											"height": 13
+										},
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAGPSc1gDSs1A6o=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSszsx0="
+											},
+											"font": "Arial;13;1",
+											"left": 117,
+											"top": 159,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "Customer"
+										},
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAGPSc1gDSs2z+4=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSszsx0="
+											},
+											"visible": false,
+											"font": "Arial;13;0",
+											"width": 98.97900390625,
+											"height": 13,
+											"text": "(from datamodel)"
+										},
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAGPSc1gDSs3EbA=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSszsx0="
+											},
+											"visible": false,
+											"font": "Arial;13;0",
+											"height": 13,
+											"horizontalAlignment": 1
+										}
+									],
+									"font": "Arial;13;0",
+									"left": 112,
+									"top": 152,
+									"width": 272.6025390625,
+									"height": 25,
+									"stereotypeLabel": {
+										"$ref": "AAAAAAGPSc1gDSs0ouI="
+									},
+									"nameLabel": {
+										"$ref": "AAAAAAGPSc1gDSs1A6o="
+									},
+									"namespaceLabel": {
+										"$ref": "AAAAAAGPSc1gDSs2z+4="
+									},
+									"propertyLabel": {
+										"$ref": "AAAAAAGPSc1gDSs3EbA="
+									}
+								},
+								{
+									"_type": "UMLAttributeCompartmentView",
+									"_id": "AAAAAAGPSc1gDSs4l9Q=",
+									"_parent": {
+										"$ref": "AAAAAAGPSc1gDSsyEms="
+									},
+									"model": {
+										"$ref": "AAAAAAGPSc1gDSsw1wU="
+									},
+									"subViews": [
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAGPSc2IgitdAfM=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs4l9Q="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSc2IZStaAcQ="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 182,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "-id: long = -1L",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAGPSc2qLStk0KY=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs4l9Q="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSc2qESthxQY="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 197,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "-lastName: String = \"\"",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAGPSc3RvCtrmNs=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs4l9Q="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSc3RpCtoOJc="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 212,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "-firstName: String = \"\"",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLAttributeView",
+											"_id": "AAAAAAGPSc3vgity/q4=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs4l9Q="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSc3vaitv728="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 227,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "-contacts: final List<String>",
+											"horizontalAlignment": 0
+										}
+									],
+									"font": "Arial;13;0",
+									"left": 112,
+									"top": 177,
+									"width": 272.6025390625,
+									"height": 68
+								},
+								{
+									"_type": "UMLOperationCompartmentView",
+									"_id": "AAAAAAGPSc1gDSs5NpM=",
+									"_parent": {
+										"$ref": "AAAAAAGPSc1gDSsyEms="
+									},
+									"model": {
+										"$ref": "AAAAAAGPSc1gDSsw1wU="
+									},
+									"subViews": [
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSc+iZCt+ry8=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSc+iOSt7VHo="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 250,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "«constructor»+Customer()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSdCWaSuHJO4=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSdCWOSuETb8="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 265,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "«constructor»+Customer(name: String)",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSdU7NSuVz1E=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSdU7CiuSiDU="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 280,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "+getId(): Long",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSdVeDCueoYg=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSdVd8Sub138="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 295,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "+setId(id: long): Customer",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSeD+KSvlOtU=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSeD+ACvipL4="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 310,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "+getLastName(): String",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSeEp2ivuRFw=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSeEpwivrV04="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 325,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "+getFirstName(): String",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSeK4Oyv7uaE=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSeK4Dyv43M8="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 340,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "+setName(first: String, last: String): Customer",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSeVG1SwNLcA=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSeVGpCwKxtI="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 355,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "+setName(name: String): Customer",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSeacwiwgypA=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSeacliwdDqk="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 370,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "+contactsCount(): int",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSegDbCwrAE0=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSegDPiwojtg="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 385,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "+getContacts(): Iterable<String>",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSeo3ziw6OZ8=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSeo3oyw3if8="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 400,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "+addContact(contact: String): Customer",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSeyDmCxPgZY=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSeyDbSxMrgI="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 415,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "+deleteContact(i: int)",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSe102Sxc1cM=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSe10ryxZKXM="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 430,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "+deleteAllContacts()",
+											"horizontalAlignment": 0
+										},
+										{
+											"_type": "UMLOperationView",
+											"_id": "AAAAAAGPSe4dlixoiC8=",
+											"_parent": {
+												"$ref": "AAAAAAGPSc1gDSs5NpM="
+											},
+											"model": {
+												"$ref": "AAAAAAGPSe4daixlEnk="
+											},
+											"font": "Arial;13;0",
+											"left": 117,
+											"top": 445,
+											"width": 262.6025390625,
+											"height": 13,
+											"text": "-splitName(name: String)",
+											"horizontalAlignment": 0
+										}
+									],
+									"font": "Arial;13;0",
+									"left": 112,
+									"top": 245,
+									"width": 272.6025390625,
+									"height": 218
+								},
+								{
+									"_type": "UMLReceptionCompartmentView",
+									"_id": "AAAAAAGPSc1gDSs65tc=",
+									"_parent": {
+										"$ref": "AAAAAAGPSc1gDSsyEms="
+									},
+									"model": {
+										"$ref": "AAAAAAGPSc1gDSsw1wU="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"width": 10,
+									"height": 10
+								},
+								{
+									"_type": "UMLTemplateParameterCompartmentView",
+									"_id": "AAAAAAGPSc1gDSs7ARk=",
+									"_parent": {
+										"$ref": "AAAAAAGPSc1gDSsyEms="
+									},
+									"model": {
+										"$ref": "AAAAAAGPSc1gDSsw1wU="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"width": 10,
+									"height": 10
+								}
+							],
+							"font": "Arial;13;0",
+							"containerChangeable": true,
+							"left": 112,
+							"top": 152,
+							"width": 272.6025390625,
+							"height": 311,
+							"nameCompartment": {
+								"$ref": "AAAAAAGPSc1gDSszsx0="
+							},
+							"attributeCompartment": {
+								"$ref": "AAAAAAGPSc1gDSs4l9Q="
+							},
+							"operationCompartment": {
+								"$ref": "AAAAAAGPSc1gDSs5NpM="
+							},
+							"receptionCompartment": {
+								"$ref": "AAAAAAGPSc1gDSs65tc="
+							},
+							"templateParameterCompartment": {
+								"$ref": "AAAAAAGPSc1gDSs7ARk="
+							}
+						}
+					]
+				},
+				{
+					"_type": "UMLClass",
+					"_id": "AAAAAAGPSc1gDSsw1wU=",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "Customer",
+					"documentation": "Class of entity type <i>Customer</i>.\n<p>\nCustomer is a person who creates and holds (owns) orders in the system.\n</p>\n\n@version <code style=color:green>{@value application.package_info#Version}</code>\n@author <code style=color:blue>{@value application.package_info#Author}</code>",
+					"attributes": [
+						{
+							"_type": "UMLAttribute",
+							"_id": "AAAAAAGPSc2IZStaAcQ=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "id",
+							"documentation": "Unique Customer id attribute, {@code id < 0} is invalid, id can only be set once.",
+							"visibility": "private",
+							"type": "long",
+							"defaultValue": "-1L"
+						},
+						{
+							"_type": "UMLAttribute",
+							"_id": "AAAAAAGPSc2qESthxQY=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "lastName",
+							"documentation": "Customer's surname attribute, never null.",
+							"visibility": "private",
+							"type": "String",
+							"defaultValue": "\"\""
+						},
+						{
+							"_type": "UMLAttribute",
+							"_id": "AAAAAAGPSc3RpCtoOJc=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "firstName",
+							"documentation": "None-surname name parts, never null.",
+							"visibility": "private",
+							"type": "String",
+							"defaultValue": "\"\""
+						},
+						{
+							"_type": "UMLAttribute",
+							"_id": "AAAAAAGPSc3vaitv728=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "contacts",
+							"documentation": "Customer contact information with multiple contacts.",
+							"visibility": "private",
+							"type": "final List<String>"
+						}
+					],
+					"operations": [
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSc+iOSt7VHo=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "Customer",
+							"documentation": "Default constructor.",
+							"stereotype": "constructor"
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSdCWOSuETb8=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "Customer",
+							"documentation": "Constructor with single-String name argument.",
+							"stereotype": "constructor",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSdDBgSuLdxY=",
+									"_parent": {
+										"$ref": "AAAAAAGPSdCWOSuETb8="
+									},
+									"name": "name",
+									"documentation": "single-String Customer name, e.g. \"Eric Meyer\"\n@throws IllegalArgumentException if name argument is null",
+									"type": "String"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSdU7CiuSiDU=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "getId",
+							"documentation": "Id getter.",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSdVdgSuZ7WQ=",
+									"_parent": {
+										"$ref": "AAAAAAGPSdU7CiuSiDU="
+									},
+									"documentation": "customer id, returns {@code null}, if id is unassigned",
+									"type": "Long",
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSdVd8Sub138=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "setId",
+							"documentation": "Id setter. Id can only be set once with valid id, id is immutable after assignment.",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSdWToiuivEc=",
+									"_parent": {
+										"$ref": "AAAAAAGPSdVd8Sub138="
+									},
+									"name": "id",
+									"documentation": "id value to assign if this.id attribute is still unassigned {@code id < 0} and id argument is valid\n@throws IllegalArgumentException if id argument is invalid ({@code id < 0})",
+									"type": "long"
+								},
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSdWToiuj5ME=",
+									"_parent": {
+										"$ref": "AAAAAAGPSdVd8Sub138="
+									},
+									"documentation": "chainable self-reference",
+									"type": {
+										"$ref": "AAAAAAGPSc1gDSsw1wU="
+									},
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSeD+ACvipL4=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "getLastName",
+							"documentation": "LastName getter.",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSeEpVivp3w8=",
+									"_parent": {
+										"$ref": "AAAAAAGPSeD+ACvipL4="
+									},
+									"documentation": "value of lastName attribute, never null",
+									"type": "String",
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSeEpwivrV04=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "getFirstName",
+							"documentation": "FirstName getter.",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSeFYJCvymio=",
+									"_parent": {
+										"$ref": "AAAAAAGPSeEpwivrV04="
+									},
+									"documentation": "value of firstName attribute, never null",
+									"type": "String",
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSeK4Dyv43M8=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "setName",
+							"documentation": "Setter for first- (\"Eric\") and lastName (\"Meyer\") attributes.",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSeMh5yv/zlQ=",
+									"_parent": {
+										"$ref": "AAAAAAGPSeK4Dyv43M8="
+									},
+									"name": "first",
+									"documentation": "value assigned to firstName attribute, null is ignored",
+									"type": "String"
+								},
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSeMh5ywAMyo=",
+									"_parent": {
+										"$ref": "AAAAAAGPSeK4Dyv43M8="
+									},
+									"name": "last",
+									"documentation": "value assigned to lastName attribute, null is ignored",
+									"type": "String"
+								},
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSeMh5ywB498=",
+									"_parent": {
+										"$ref": "AAAAAAGPSeK4Dyv43M8="
+									},
+									"documentation": "chainable self-reference",
+									"type": {
+										"$ref": "AAAAAAGPSc1gDSsw1wU="
+									},
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSeVGpCwKxtI=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "setName",
+							"documentation": "Setter that splits a single-String name (e.g. \"Eric Meyer\") into first- and lastName parts and assigns parts to corresponding attributes.",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSeVtFiwRcSQ=",
+									"_parent": {
+										"$ref": "AAAAAAGPSeVGpCwKxtI="
+									},
+									"name": "name",
+									"documentation": "single-String name to split into first- and lastName parts\n@throws IllegalArgumentException if name argument is null",
+									"type": "String"
+								},
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSeVtFywSmIg=",
+									"_parent": {
+										"$ref": "AAAAAAGPSeVGpCwKxtI="
+									},
+									"documentation": "chainable self-reference",
+									"type": {
+										"$ref": "AAAAAAGPSc1gDSsw1wU="
+									},
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSeacliwdDqk=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "contactsCount",
+							"documentation": "Return the number of contacts.",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSebL2iwkvvQ=",
+									"_parent": {
+										"$ref": "AAAAAAGPSeacliwdDqk="
+									},
+									"documentation": "number of contacts",
+									"type": "int",
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSegDPiwojtg=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "getContacts",
+							"documentation": "Contacts getter (as {@code Iterable<String>}).",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSegvtiwvy6s=",
+									"_parent": {
+										"$ref": "AAAAAAGPSegDPiwojtg="
+									},
+									"documentation": "contacts (as {@code Iterable<String>})",
+									"type": "Iterable<String>",
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSeo3oyw3if8=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "addContact",
+							"documentation": "Add new contact for Customer. Only valid contacts (not null, \"\" nor duplicates) are added. Null-arguments raise IllegalArgumentException.",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSeppMSw+tNw=",
+									"_parent": {
+										"$ref": "AAAAAAGPSeo3oyw3if8="
+									},
+									"name": "contact",
+									"documentation": "contact (not null or \"\" nor duplicate), invalid contacts are ignored\n@throws IllegalArgumentException if contact argument is null or empty \"\" String",
+									"type": "String"
+								},
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSeppMSw/8gk=",
+									"_parent": {
+										"$ref": "AAAAAAGPSeo3oyw3if8="
+									},
+									"documentation": "chainable self-reference",
+									"type": {
+										"$ref": "AAAAAAGPSc1gDSsw1wU="
+									},
+									"direction": "return"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSeyDbSxMrgI=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "deleteContact",
+							"documentation": "Delete the i-th contact with {@code i >= 0} and {@code i < contactsCount()}, otherwise method has no effect.",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSezJYyxTKAE=",
+									"_parent": {
+										"$ref": "AAAAAAGPSeyDbSxMrgI="
+									},
+									"name": "i",
+									"documentation": "index of contact to delete",
+									"type": "int"
+								}
+							]
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSe10ryxZKXM=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "deleteAllContacts",
+							"documentation": "Delete all contacts."
+						},
+						{
+							"_type": "UMLOperation",
+							"_id": "AAAAAAGPSe4daixlEnk=",
+							"_parent": {
+								"$ref": "AAAAAAGPSc1gDSsw1wU="
+							},
+							"name": "splitName",
+							"documentation": "Split single-String name into last- and first name parts.",
+							"visibility": "private",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGPSe5V9Cxs1LQ=",
+									"_parent": {
+										"$ref": "AAAAAAGPSe4daixlEnk="
+									},
+									"name": "name",
+									"documentation": "single-String name to split into first- and last name parts\n@throws IllegalArgumentException if name argument is null",
+									"type": "String"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}
