@@ -11,16 +11,16 @@ The *Test Plan* for class *Customer* is structured in categories:
     `Customer_200_Id_Tests.java` in same package.
 
 1. *Name* (300) Tests in file:
-    [Customer_300_Name_Tests.java](https://github.com/sgra64/se1-bestellsystem/blob/markup/c2-customer-tests/Customer_300_Name_Tests.java)
-    in same package.
+    [Customer_300_Name_Tests.java](Customer_300_Name_Tests.java)
+    in the same package.
 
 1. *Contacts* (400) Tests in file:
-    [Customer_400_Contacts_Tests.java](https://github.com/sgra64/se1-bestellsystem/blob/markup/c2-customer-tests/Customer_400_Contacts_Tests.java)
-    in same package.
+    [Customer_400_Contacts_Tests.java](Customer_400_Contacts_Tests.java)
+    in the same package.
 
 1. Extended *Name* (500) Tests in file:
-    [Customer_500_NameXXL_Tests.java](https://github.com/sgra64/se1-bestellsystem/blob/markup/c2-customer-tests/Customer_500_NameXXL_Tests.java)
-    in same package.
+    [Customer_500_NameXXL_Tests.java](Customer_500_NameXXL_Tests.java)
+    in the same package.
 
 
 Topics:
@@ -313,8 +313,8 @@ public class Customer_200_Id_Tests {
 - `setName(String name)`
 - `setName(String first, String last)`
 
-Install [Customer_300_Name_Tests.java](https://github.com/sgra64/se1-bestellsystem/blob/markup/c2-customer-tests/Customer_300_Name_Tests.java) in package `datamodel` in `tests`
-and run tests.
+Install [Customer_300_Name_Tests.java](Customer_300_Name_Tests.java)
+in package `datamodel` in `tests` and run tests.
 
 Make sure tests run and fix tested code (your implementation of class *Customer*).
 
@@ -330,8 +330,8 @@ Make sure tests run and fix tested code (your implementation of class *Customer*
 - `deleteContact(int i)`
 - `deleteAllContacts()`
 
-Install [Customer_400_Contacts_Tests.java](https://github.com/sgra64/se1-bestellsystem/blob/markup/c2-customer-tests/Customer_400_Contacts_Tests.java) in package `datamodel` in `tests`
-and run tests.
+Install [Customer_400_Contacts_Tests.java](Customer_400_Contacts_Tests.java)
+in package `datamodel` in `tests` and run tests.
 
 Make sure tests run and fix tested code (your implementation of class *Customer*).
 
@@ -343,8 +343,8 @@ Make sure tests run and fix tested code (your implementation of class *Customer*
 Extended *Name* (500) Tests test name-related methods of class *Customer*
 with some extreme names.
 
-Install [Customer_500_NameXXL_Tests.java](https://github.com/sgra64/se1-bestellsystem/blob/markup/c2-customer-tests/Customer_500_NameXXL_Tests.java) in package `datamodel` in `tests`
-and run tests.
+Install [Customer_500_NameXXL_Tests.java](Customer_500_NameXXL_Tests.java)
+in package `datamodel` in `tests` and run tests.
 
 Make sure tests run and fix tested code (your implementation of class *Customer*).
 
