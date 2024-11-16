@@ -13,6 +13,6 @@ package application;
  * Class that defines variables shared in Javadocs.
  */
 class package_info {
-    static final String Author = "sgraupner";
+    static final String Author = "<your name>";
     static final String Version = "1.0.0-SNAPSHOT";
 }
