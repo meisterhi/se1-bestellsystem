@@ -20,21 +20,19 @@
 #  - cmd [cmd] [--single-line]  ; output full command for cmd argument in multi-
 #                               ; or single-line format (with traling '\')
 #  - show [-all] [--single-line] [cmd1, cmd2...] [args]  ; show command sequence
-#  - build | make | mk [--show] [--silent|-s] [cmd1, cmd2...] [args]
-#                                   ; execute cmd sequence, if not --show
+#  - make | mk [--show] [--silent|-s] [cmd1, cmd2...] [args]
+#                               ; execute cmd sequence, if not --show
 #  - clean                      ; remove compiled/created artefacts
 #  - wipe-env                   ; unset project env variables, funcs and aliases
 #  - wipe                       ; remove the entire project environment
-#  - source .env/setenv.sh      ; build / re-build the project environment
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 # set command aliases
 [ -z "$(alias mk 2>/dev/null)" ] && aliases_present=false || aliases_present=true
 alias mk="make"
-alias build="make"
+alias clean="make clean"
 alias wipe-env="make wipe-env --silent"
 alias wipe="make wipe --silent"
-alias clean="make clean"
 
 # map keys used in code to actual paths and files
 declare -gA P=(
@@ -204,7 +202,7 @@ function setup() {
 
     # report created aliases and functions
     [ "$aliases_present" = "false" ] && echo " - functions and aliases:" && \
-        echo "    - aliases: mk, build, wipe, clean" && \
+        echo "    - aliases: mk, wipe-env, wipe, clean" && \
         echo "    - functions: make, show, cmd, copy, javac_version, coverage_report" && echo "\\\\"
 
     echo "project environment is set (use 'wipe' to reset)"
@@ -278,14 +276,15 @@ function cmd() {
             ;;
     build)      # clean project and build ('package' runs silently)
             cmd=("mk compile compile-tests run-tests; \\"
-                "show package; mk package --silent >/dev/null"
+                "show package; mk package --silent >/dev/null; \\"
+                "echo '\\''\\'; echo final product artefact built:; ls -la \${P[jar]}"
             ) ;;
     wipe-env)   # unset project-related environment variables, functions and aliases
             cmd=("unset P cmd_shorts PROJECT_PATH CLASSPATH MODULEPATH JDK_JAVAC_OPTIONS; \\"
                 "unset JACOCO_AGENT JDK_JAVADOC_OPTIONS JUNIT_CLASSPATH JUNIT_OPTIONS JAVAC_VERSION; \\"
                 "unset aliases_present analyze_classes; \\"
                 "unset -f leave cmd show make copy javac_version coverage_report; \\"
-                "unalias mk build wipe clean"
+                "unalias mk clean wipe-env wipe"
             ) ;;
     wipe)   # wipe environment and clear project of all generated files (keep libs link)
             local wipe_files=( .project .classpath .vscode/.classpath )
