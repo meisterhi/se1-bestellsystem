@@ -1,0 +1,25 @@
+//---------------------------------------------------------------------
+// VSCode launch configuration for "Run and Debug" pane (Shift+Ctrl+D)
+//---------------------------------------------------------------------
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Runtime",
+            "request": "launch",
+            "mainClass": "se1.bestellsystem/application.Runtime",
+            "projectName": "se1.bestellsystem",
+            "vmArgs": "",
+            "args": "A BB CCC launch.json"
+        },
+        {
+            "name": "Current File",
+            "request": "launch",
+            "type": "java",
+            "mainClass": "${file}",
+            "vmArgs": "-ea",
+            "args": ""
+        }
+    ]
+}
