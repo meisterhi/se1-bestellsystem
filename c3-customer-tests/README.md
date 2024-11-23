@@ -1,24 +1,24 @@
 # C3: *JUnit* Tests for *Customer* Class
 
-The assignment demonstrates writing *JUnit* tests for class *Customer*.
+This assignment demonstrates writing *JUnit* tests for the class *Customer*.
 
 The *Test Plan* for class *Customer* is structured in categories:
 
-1. *Constructor* (100) Tests in file:
+1. *Constructor* - Tests (100) in file:
     `Customer_100_Constructor_Tests.java` in package `datamodel` in `tests`.
 
-1. *Id* (200) Tests in file:
+1. *Id* - Tests (200) in file:
     `Customer_200_Id_Tests.java` in same package.
 
-1. *Name* (300) Tests in file:
+1. *Name* - Tests (300) in file:
     [Customer_300_Name_Tests.java](Customer_300_Name_Tests.java)
     in the same package.
 
-1. *Contacts* (400) Tests in file:
+1. *Contacts* - Tests (400) in file:
     [Customer_400_Contacts_Tests.java](Customer_400_Contacts_Tests.java)
     in the same package.
 
-1. Extended *Name* (500) Tests in file:
+1. Extended *Name* - Tests (500) in file:
     [Customer_500_NameXXL_Tests.java](Customer_500_NameXXL_Tests.java)
     in the same package.
 
@@ -31,14 +31,15 @@ Topics:
 1. [Run *Contacts* (400) Tests](#4-run-contacts-400-tests)
 1. [Run Extended *Name* (500) Tests](#5-run-extended-name-500-tests)
 1. [Run all *Customer* Tests](#6-run-all-customer-tests)
+1. [Commit and Push Changes](#7-commit-and-push-changes)
 
 
 &nbsp;
 
 ## 1. Create *Constructor* (100) Tests
 
-Constructor tests test the constructor(s) of a class. Class *Customer*
-has two constructors:
+*Constructor* (100) Tests test the constructor(s) of a class.
+Class *Customer* has two constructors:
 
 ```java
 /**
@@ -52,7 +53,7 @@ public Customer() { }
  * @throws IllegalArgumentException if name argument is null
  */
 public Customer(String name) {
-    setName(name);  // throws IllegalArgumentException when name is null
+    setName(name);  // throws IllegalArgumentException if name is null
 }
 ```
 
@@ -313,10 +314,11 @@ public class Customer_200_Id_Tests {
 - `setName(String name)`
 - `setName(String first, String last)`
 
-Install [Customer_300_Name_Tests.java](Customer_300_Name_Tests.java)
+Install [*Customer_300_Name_Tests.java*](Customer_300_Name_Tests.java)
 in package `datamodel` in `tests` and run tests.
 
-Make sure tests run and fix tested code (your implementation of class *Customer*).
+Fix the tested code (your implementation of class *Customer*) if tests
+do not pass.
 
 
 &nbsp;
@@ -330,10 +332,11 @@ Make sure tests run and fix tested code (your implementation of class *Customer*
 - `deleteContact(int i)`
 - `deleteAllContacts()`
 
-Install [Customer_400_Contacts_Tests.java](Customer_400_Contacts_Tests.java)
+Install [*Customer_400_Contacts_Tests.java*](Customer_400_Contacts_Tests.java)
 in package `datamodel` in `tests` and run tests.
 
-Make sure tests run and fix tested code (your implementation of class *Customer*).
+Fix the tested code (your implementation of class *Customer*) if tests
+do not pass.
 
 
 &nbsp;
@@ -346,7 +349,8 @@ with some extreme names.
 Install [Customer_500_NameXXL_Tests.java](Customer_500_NameXXL_Tests.java)
 in package `datamodel` in `tests` and run tests.
 
-Make sure tests run and fix tested code (your implementation of class *Customer*).
+Fix the tested code (your implementation of class *Customer*) if tests
+do not pass.
 
 
 &nbsp;
@@ -531,6 +535,21 @@ Test run finished after 856 ms
 done.
 ```
 
-<!-- 
-<img src="https: //raw.githubusercontent.com/sgra64/se1-bestellsystem/refs/heads/markup/c2-customer/Customer.png" alt="drawing" width="600"/>
- -->
+
+&nbsp;
+
+## 7. Commit and Push Changes
+
+Commit changes you made to the project and push to your remote repository:
+
+```sh
+git status                      # show changed files
+git add .                       # stage changes for commit
+git commit -m "c3: JUnit-tests for class Customer.java"
+
+git push                        # push the commit to your upstream remote repository
+```
+
+If you can't push, make sure you got
+[*Step-5: Check Project into Repository*](https://github.com/sgra64/se1-bestellsystem)
+right from the *se1-bestellsystem* project setup.

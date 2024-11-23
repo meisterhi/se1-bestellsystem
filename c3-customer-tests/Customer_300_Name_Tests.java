@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /**
@@ -42,14 +43,28 @@ class Customer_300_Name_Tests {
 
     @Test @Order(302)
     void test302_setNameFirstAndLastName() {
-        c1.setName("Eric", "");     // firstName only
-        assertEquals("Eric", c1.getFirstName());
+        IllegalArgumentException thrown =
+            assertThrows(
+                IllegalArgumentException.class, () -> {
+                    c1.setName("Eric", "");     // last name empty is illegal
+        });
+        // test for correct error message
+        assertEquals("last name empty", thrown.getMessage());
+        // names remain initial (unchanged)
+        assertEquals("", c1.getFirstName());
         assertEquals("", c1.getLastName());
     }
 
     @Test @Order(303)
     void test303_setNameFirstAndLastName() {
-        c1.setName("", "");         // firstName only
+        IllegalArgumentException thrown =
+            assertThrows(
+                IllegalArgumentException.class, () -> {
+                    c1.setName("", "");         // last name empty is illegal
+        });
+        // test for correct error message
+        assertEquals("last name empty", thrown.getMessage());
+        // names remain initial (unchanged)
         assertEquals("", c1.getFirstName());
         assertEquals("", c1.getLastName());
     }
