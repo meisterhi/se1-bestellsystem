@@ -49,6 +49,30 @@ be modified after creation, e.g. names set to null: *setName(null)*.
 A common approach to address these problems is to centralize *object creation*
 at a central place: `DataFactory.java`.
 
+- The class exists as a *singleton*, which means at most one instance of this
+    class will exist. This is indicated in the UML class diagram by stereotype:
+    `<<singleton>>`.
+
+- *DataFactory* includes automatic generation of *Customer* *id* attributes,
+    which are managed in an `IdPool<T>` that assumes some initially provided *id*
+    and then expands as *id* are consumed by newly created *Customer* objects.
+
+    *IdPool* is of a generic type `<T>` taking into account that later classes
+    will use `String` and `Long` values for *id*.
+
+- Furthermore, splitting of single-String names, e.g. `"Eric Meyer"` into
+    last name: `"Meyer"` and first name: `"Eric"` has been moved out of class
+    *Customer* into mathod: `Optional<NameParts> validateSplitName(name String)`.
+    This method return a valid pair of *first* and *last name* parts, if the input
+    *name* could sucessfully be split and name parts are valid. Only then, a
+    `NameParts` object is returned in the `Optional<NameParts>`.
+
+The UML Class Diagram shows the new *DataFactory* class with associated inner
+class: *IdPool* and Record *NameParts:*
+
+<img src="DataFactory.png" alt="drawing" width="800"/>
+
+
 Create a class `DataFactory.java` in the package `datamodel` such that it:
 
 1. implements the *"lazy"* [*Singleton*](https://en.wikipedia.org/wiki/Singleton_pattern)
@@ -88,7 +112,7 @@ Create a class `DataFactory.java` in the package `datamodel` such that it:
             if(validContact.isPresent()) {
                 // only create Customer when all conditions are met
                 Customer c = new Customer(id, nameParts.get().first(), nameParts.get().last());
-                c.contacts.add(validContact.get());
+                c.addContact(validContact.get());
                 return Optional.of(c);
             }
         }
@@ -96,219 +120,219 @@ Create a class `DataFactory.java` in the package `datamodel` such that it:
     }
     ```
 
-Supplement class `DataFactory.java` with code for the generation of unique *id's*:
+1. Supplement class `DataFactory.java` with code for the generation of unique *id's*:
 
-```java
-/*
- * Static {@link DataFactory} <i>Singleton</i> instance (<i>lazy</i> pattern).
- */
-private static DataFactory singleton = null;
+    ```java
+    /*
+    * Static {@link DataFactory} <i>Singleton</i> instance (<i>lazy</i> pattern).
+    */
+    private static DataFactory singleton = null;
 
-/*
- * Random generator.
- */
-private final Random rand = new Random();
+    /*
+    * Random generator.
+    */
+    private final Random rand = new Random();
 
-/*
- * Supplier for {@link Customer} id of 6-digit random numbers.
- */
-private IdPool<Long> customerIdSupplier = new IdPool<>(
-    () -> 100000L + rand.nextLong(900000L),
-    Arrays.asList(  // initial Customer ids
-        892474L, 643270L, 286516L, 412396L, 456454L, 651286L
-    )
-);
-
-/**
- * Internal class to manage pool of unique {@code ids} of type {@code T}.
- */
-private class IdPool<T> {
-    final Supplier<T> supplier;     // supplier for id's of type {@code T}
-    final List<T> pool;             // pool of used or available id
-    int i=0;    // {@code [0..i-1]}: id in use, {@code [i..cap-1]}: available id
-    int cap;    // pool capacity
+    /*
+    * Supplier for {@link Customer} id of 6-digit random numbers.
+    */
+    private IdPool<Long> customerIdSupplier = new IdPool<>(
+        () -> 100000L + rand.nextLong(900000L),
+        Arrays.asList(  // initial Customer ids
+            892474L, 643270L, 286516L, 412396L, 456454L, 651286L
+        )
+    );
 
     /**
-     * Constructor of id pool of {@code T}.
-     * @param supplier external supplier of id to fill the pool
-     * @param initial id to initialize the pool
+     * Internal class to manage pool of unique {@code ids} of type {@code T}.
      */
-    IdPool(Supplier<T> supplier, List<T> initial) {
-        this.supplier = supplier;
-        this.pool = new ArrayList<>(Optional.ofNullable(initial).orElse(List.of()));
-        this.cap = this.pool.size();
+    private class IdPool<T> {
+        private final Supplier<T> supplier; // supplier for id's of type {@code T}
+        private final List<T> pool; // pool of used or available id
+        private int i=0;            // [0..i-1]: used id, [i..cap-1]: available id
+        private int capacity;       // pool capacity
+
+        /**
+         * Constructor of id pool of {@code T}.
+         * @param supplier external supplier of id to fill the pool
+         * @param initialIds id to initialize the pool
+         */
+        IdPool(Supplier<T> supplier, List<T> initialIds) {
+            this.supplier = supplier;
+            this.pool = new ArrayList<>(Optional.ofNullable(initialIds).orElse(List.of()));
+            this.capacity = this.pool.size();
+        }
+
+        /**
+         * Return next id from the pool, resupply pool if capacity is exceeded.
+         * @return next id of type {@code T}
+         */
+        T next() {
+            if(i >= capacity) {  // add 10 supplied ids to the pool
+                capacity += Stream.generate(supplier)
+                        .filter(n -> ! pool.contains(n))
+                        .limit(10)
+                        .peek(n -> pool.add(n))
+                        .count();
+            }
+            return pool.get(i++);
+        }
+    }
+    ```
+
+1. Supplement class `DataFactory.java` with regular expressions for
+    *name* and *contact* validation:
+
+    ```java
+    /*
+    * Regular expression to validate a name or name parts. A valid
+    * name must start with a letter, followed by a combination of
+    * letters, "-", "." or white spaces. Valid names are: "E", "E.",
+    * "Eric", "Ulla-Nadine", "Eric Meyer", "von-Blumenfeld".
+    * Names do not include numbers or other special characters.
+    * For the use of regular expressions, see
+    * https://stackoverflow.com/questions/8204680/java-regex-email
+    */
+    private final Pattern nameRegex =
+        Pattern.compile("^[A-Za-z][A-Za-z-\\s.]*$");
+
+    /*
+     * Regular expression to validate an email address.
+     */
+    private final Pattern emailRegex =
+        Pattern.compile("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z0-9_]+$", Pattern.CASE_INSENSITIVE);
+
+    /*
+     * Regular expression to validate a phone or fax number.
+     */
+    private final Pattern phoneRegex =
+        Pattern.compile("^(phone:|fax:|\\+[0-9]+){0,1}\\s*[\\s0-9()][\\s0-9()-]*", Pattern.CASE_INSENSITIVE);
+    ```
+
+1. Supplement class `DataFactory.java` with code for contact validation:
+
+    ```java
+    /**
+     * Validate contact for acceptable email address or phone number and
+     * return contact or empty result.
+     * <br>
+     * The validation rule for an <i>email address</i> is defined by a
+     * regular expression:
+     *      {@code "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z0-9_]+$"}.
+     * <br>
+     * The vaidation rule for an <i>phone number</i> is defined by:
+     *      {@code "^(phone:|fax:|\\+[0-9]+){0,1}\\s*[\\s0-9()][\\s0-9()-]*"}.
+     * <br>
+     * Leading and traling whitespaces and quotes are trimmed from contact
+     * before validation.
+     * @param contact contact to validate
+     * @return possibly modified (e.g. dequoted, trimmed) valid contact or empty result
+     */
+    public Optional<String> validateContact(String contact) {
+        if(contact != null) {
+            var cont = trimQuotesAndWhiteSpaces(contact);
+            final int minLength = 6;
+            boolean valid = cont.length() >= minLength;
+            if(valid && (
+                emailRegex.matcher(cont).matches() ||
+                phoneRegex.matcher(cont).matches()
+            )) {
+                return Optional.of(cont);
+            }
+        }
+        return Optional.empty();
+    }
+    ```
+
+1. Supplement class `DataFactory.java` with code for splitting single-String
+    names (e.g. `"Eric Meyer"`) into first and last names (first: `"Eric"`,
+    first: `"Meyer"`) with name validation:
+
+    ```java
+    /**
+     * Validate name and return name or empty result. A valid name must
+     * start with a letter, followed by a combination of letters, "-",
+     * "." or white spaces. Valid names are: "E", "E.", "Eric",
+     * "Ulla-Nadine", "Eric Meyer", "von-Blumenfeld".
+     * Names do not include numbers or other special characters.
+     * <br>
+     * The validation rule for a <i>name</i> is defined by a regular
+     * expression:
+     *      {@code "^[A-Za-z][A-Za-z-\\s.]*$"}.
+     * Leading and traling whitespaces and quotes are trimmed from name
+     * before validation.
+     * 
+     * @param name name to validate
+     * @param acceptEmptyName accept empty ("") name, e.g. as first name
+     * @return possibly modified (e.g. dequoted, trimmed) valid name or empty result
+     */
+    public Optional<String> validateName(String name, boolean acceptEmptyName) {
+        if(name != null) {
+            name = trimQuotesAndWhiteSpaces(name);
+            if(nameRegex.matcher(name).matches() || (name.length()==0 && acceptEmptyName))
+                return Optional.of(name);
+        }
+        return Optional.empty();
     }
 
     /**
-     * Return next id from the pool, resupply pool if capacity is exceeded.
-     * @return next id of type {@code T}
+     * Record of a name with first and last name parts.
+     * @param first first name parts
+     * @param last last name parts
+     * @hidden exclude from documentation
      */
-    T next() {
-        if(i >= cap) {  // add 10 supplied ids to the pool
-            cap += Stream.generate(supplier)
-                    .filter(n -> ! pool.contains(n))
-                    .limit(10)
-                    .peek(n -> pool.add(n))
-                    .count();
-        }
-        return pool.get(i++);
-    }
-};
-```
+    public record NameParts(String first, String last) { }
 
-Supplement class `DataFactory.java` with regular expressions for
-*name* and *contact* validation:
-
-```java
-/*
- * Regular expression to validate a name or name parts. A valid
- * name must start with a letter, followed by a combination of
- * letters, "-", "." or white spaces. Valid names are: "E", "E.",
- * "Eric", "Ulla-Nadine", "Eric Meyer", "von-Blumenfeld".
- * Names do not include numbers or other special characters.
- * For the use of regular expressions, see
- * https://stackoverflow.com/questions/8204680/java-regex-email
- */
-private final Pattern nameRegex =
-    Pattern.compile("^[A-Za-z][A-Za-z-\\s.]*$");
-
-/*
-    * Regular expression to validate an email address.
-    */
-private final Pattern emailRegex =
-    Pattern.compile("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z0-9_]+$", Pattern.CASE_INSENSITIVE);
-
-/*
-    * Regular expression to validate a phone or fax number.
-    */
-private final Pattern phoneRegex =
-    Pattern.compile("^(phone:|fax:|\\+[0-9]+){0,1}\\s*[\\s0-9()][\\s0-9()-]*", Pattern.CASE_INSENSITIVE);
-```
-
-Supplement class `DataFactory.java` with code for contact validation:
-
-```java
-/**
- * Validate contact for acceptable email address or phone number and
- * return contact or empty result.
- * <br>
- * The validation rule for an <i>email address</i> is defined by a
- * regular expression:
- *      {@code "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z0-9_]+$"}.
- * <br>
- * The vaidation rule for an <i>phone number</i> is defined by:
- *      {@code "^(phone:|fax:|\\+[0-9]+){0,1}\\s*[\\s0-9()][\\s0-9()-]*"}.
- * <br>
- * Leading and traling whitespaces and quotes are trimmed from contact
- * before validation.
- * @param contact contact to validate
- * @return possibly modified (e.g. dequoted, trimmed) valid contact or empty result
- */
-public Optional<String> validateContact(String contact) {
-    if(contact != null) {
-        var cont = trimQuotesAndWhiteSpaces(contact);
-        final int minLength = 6;
-        boolean valid = cont.length() >= minLength;
-        if(valid && (
-            emailRegex.matcher(cont).matches() ||
-            phoneRegex.matcher(cont).matches()
-        )) {
-            return Optional.of(cont);
-        }
-    }
-    return Optional.empty();
-}
-```
-
-Supplement class `DataFactory.java` with code for splitting single-String names
-(e.g. `"Eric Meyer"`) into first and last names (first: `"Eric"`, first: `"Meyer"`)
-with name validation:
-
-```java
-/**
- * Validate name and return name or empty result. A valid name must
- * start with a letter, followed by a combination of letters, "-",
- * "." or white spaces. Valid names are: "E", "E.", "Eric",
- * "Ulla-Nadine", "Eric Meyer", "von-Blumenfeld".
- * Names do not include numbers or other special characters.
- * <br>
- * The validation rule for a <i>name</i> is defined by a regular
- * expression:
- *      {@code "^[A-Za-z][A-Za-z-\\s.]*$"}.
- * Leading and traling whitespaces and quotes are trimmed from name
- * before validation.
- * 
- * @param name name to validate
- * @param acceptEmptyName accept empty ("") name, e.g. as first name
- * @return possibly modified (e.g. dequoted, trimmed) valid name or empty result
- */
-public Optional<String> validateName(String name, boolean acceptEmptyName) {
-    if(name != null) {
-        name = trimQuotesAndWhiteSpaces(name);
-        if(nameRegex.matcher(name).matches() || (name.length()==0 && acceptEmptyName))
-            return Optional.of(name);
-    }
-    return Optional.empty();
-}
-
-/**
- * Record of a name with first and last name parts.
- * @param first first name parts
- * @param last last name parts
- * @hidden exclude from documentation
- */
-public record NameParts(String first, String last) { }
-
-/**
- * Split single-String name into first and last name parts and
- * validate parts, e.g. "Meyer, Eric" is split into first: "Eric"
- * and last name: "Meyer". Both parts are validated by method
- * {@link validateName}().
- * @param name single-String name
- * @return record with validated first and last name parts
- */
-public Optional<NameParts> validateSplitName(String name) {
-    if(name != null && name.length() > 0) {
-        String first="", last="";
-        String[] spl1 = name.split("[,;]");
-        if(spl1.length > 1) {
-            // two-part name with last name first
-            last = spl1[0];
-            first = spl1[1];
-        } else {
-            // no separator [,;] -> split by white spaces;
-            for(String s : name.split("\\s+")) {
-                if(last.length() > 0) {
-                    // collect firstNames in order and lastName as last
-                    first += (first.length()==0? "" : " ") + last;
+    /**
+     * Split single-String name into first and last name parts and
+     * validate parts, e.g. "Meyer, Eric" is split into first: "Eric"
+     * and last name: "Meyer". Both parts are validated by method
+     * {@link validateName}().
+     * @param name single-String name
+     * @return record with validated first and last name parts
+     */
+    public Optional<NameParts> validateSplitName(String name) {
+        if(name != null && name.length() > 0) {
+            String first="", last="";
+            String[] spl1 = name.split("[,;]");
+            if(spl1.length > 1) {
+                // two-part name with last name first
+                last = spl1[0];
+                first = spl1[1];
+            } else {
+                // no separator [,;] -> split by white spaces;
+                for(String s : name.split("\\s+")) {
+                    if(last.length() > 0) {
+                        // collect firstNames in order and lastName as last
+                        first += (first.length()==0? "" : " ") + last;
+                    }
+                    last = s;
                 }
-                last = s;
+            }
+            var lastName = validateName(last, false);
+            if(lastName.isPresent()) {
+                var firstName = validateName(first, true);
+                if(firstName.isPresent()) {
+                    return Optional.of(new NameParts(firstName.get(), lastName.get()));
+                }
             }
         }
-        var lastName = validateName(last, false);
-        if(lastName.isPresent()) {
-            var firstName = validateName(first, true);
-            if(firstName.isPresent()) {
-                return Optional.of(new NameParts(firstName.get(), lastName.get()));
-            }
-        }
+        return Optional.empty();
     }
-    return Optional.empty();
-}
 
-/**
- * Trim leading and trailing white spaces, commata {@code [,;]} and
- * quotes {@code ["']} from a String.
- * @param s String to trim
- * @return trimmed String
- */
-private String trimQuotesAndWhiteSpaces(String s) {
-    s = s.replaceAll("^[\\s\"',;]*", "");   // trim leading white spaces[\s], commata[,;] and quotes['"]
-    s = s.replaceAll( "[\\s\"',;]*$", "");  // trim trailing white spaces[\s], commata[,;] and quotes['"]
-    s = s.replaceAll( "[\\s]+", " ");       // remove white spaces sequences, "Eric  Meyer" -> "Eric Meyer"
-    return s;
-}
-```
+    /**
+     * Trim leading and trailing white spaces, commata {@code [,;]} and
+     * quotes {@code ["']} from a String.
+     * @param s String to trim
+     * @return trimmed String
+     */
+    private String trimQuotesAndWhiteSpaces(String s) {
+        s = s.replaceAll("^[\\s\"',;]*", "");   // trim leading white spaces[\s], commata[,;] and quotes['"]
+        s = s.replaceAll( "[\\s\"',;]*$", "");  // trim trailing white spaces[\s], commata[,;] and quotes['"]
+        s = s.replaceAll( "[\\s]+", " ");       // remove white spaces sequences, "Eric  Meyer" -> "Eric Meyer"
+        return s;
+    }
+    ```
 
 
 &nbsp;
@@ -321,13 +345,19 @@ objects from validated parameters.
 
 Making class *Customer* immutable means:
 
-1. Make all attributes: `final`.
+1. Make all attributes: `private` and `final`.
 
 1. Remove *setter()* methods.
 
 1. Remove all constructors, except one used by *DataFactory* with
-    visibility: `protected` that prevents creation of *Customer*
-    objects from other packages:
+    visibility: `protected` to prevent creation of *Customer*
+    objects from other packages.
+
+The remaining class has no *setter()* methods and hence is called *immutable*,
+which is shown in the UML class diagram by stereotype: `<<immutable>>`.
+
+<img src="Customer.png" alt="drawing" width="400"/>
+
 
 ```java
 /**
@@ -336,25 +366,25 @@ Making class *Customer* immutable means:
  * <br>
  * An <i>immutable</i> class does not allow changes to attributes.
  * {@link DataFactory} is the only class that creates {@link Customer}
- * objects from validated parameters.
+ * objects from validated arguments.
  * 
  * @version <code style=color:green>{@value application.package_info#Version}</code>
  * @author <code style=color:blue>{@value application.package_info#Author}</code>
  */
-public class Customer {
+public final class Customer {
 
     /**
-     * Unique Customer id attribute.
+     * Unique Customer id attribute. Must be {@code > 0}).
      */
     private final long id;
 
     /**
-     * Surname attribute.
+     * Customer surname attribute. Must not be {@code null} and not empty {@code ""}.
      */
     private final String lastName;
 
     /**
-     * None-surname name parts.
+     * Customer none-surname parts. Must not be {@code null}, can be empty {@code ""}.
      */
     private final String firstName;
 
@@ -363,17 +393,24 @@ public class Customer {
      * or phone numbers. The attribute is exposed to {@link DataFactory}
      * in the same package.
      */
-    final List<String> contacts = new ArrayList<>();
+    private final List<String> contacts = new ArrayList<>();
 
 
     /**
-     * None-public constructor used by {@link DataFactory} avoiding object
-     * creation outside the package.
-     * @param id supplied by {@link DataFactory}
-     * @param firstName first name attribute
-     * @param lastName last name attribute
+     * None-public constructor used by {@link DataFactory} preventing object
+     * creation outside this package.
+     * @param id customer identifier supplied by {@link DataFactory}
+     * @param firstName first name attribute, must not be {@code null}, can be empty {@code ""}
+     * @param lastName last name attribute, must not be {@code null} and not empty {@code ""}.
+     * @throws IllegalArgumentException if {@code id} is negative, firstName is {@code null}
+     *      or lastName is {@code null} or empty {@code ""}
      */
-    Customer(long id, String firstName, String lastName) {
+    protected Customer(long id, String firstName, String lastName) {
+        if(id < 0L)
+            throw new IllegalArgumentException("id negative");
+        if(lastName==null || lastName.length()==0)
+            throw new IllegalArgumentException("lastName null or empty");
+        //
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -433,8 +470,8 @@ public class Customer {
     }
 
     /**
-     * Delete the i-th contact with {@code i >= 0} and {@code i < contactsCount()},
-     * method has no effect when {@code i} is outside these bounds.
+     * Delete the i-th contact with {@code i >= 0} and {@code i < contactsCount()}.
+     * Method has no effect for {@code i} outside valid bounds.
      * @param i index of contact to delete
      */
     public void deleteContact(int i) {
