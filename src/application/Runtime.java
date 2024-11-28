@@ -75,40 +75,49 @@ public class Runtime {
         public int priority() default 0;
     }
 
-    /*
+    /**
      * Private reference to the {@code Runtime} singleton object.
      */
     private static Runtime singleton = null;
 
-    /*
+    /**
      * {@code Runtime} lifecycle states.
      */
-    private enum State {notStarted, starting, started, shuttingDown, shutDown};
+    private enum State {
+        /** initial state */        notStarted,
+        /** initializing Runtime */ starting,
+        /** Runtime started */      started,
+        /** Runtime terminating */  shuttingDown,
+        /** Runtime is shut down */ shutDown};
+
+    /**
+     * current state
+     */
     private State state = State.notStarted;
 
-    /*
+    /**
      * Logger instance used by {@code Runtime}, see configuration in:
      * {@code log4j2.properties}.
      */
     private final Logger log = LoggerFactory.getLogger(Runtime.class.getSimpleName());
 
-    /*
+    /**
      * Properties obtained from the {@code application.properties} file.
      */
     private final Properties properties = new Properties();
 
-    /*
+    /**
      * Classes found during class scan (only classes of the application are included).
      */
     private final List<Class<?>> scannedClasses = new ArrayList<>();
 
-    /*
+    /**
      * List of classes that can be assigned from the class used as key.
      */
     private final Map<Class<?>, List<Class<?>>> assignables = new HashMap<>();
 
     /**
-     * <i>Bean</i> objects created from scanned classes through {@link getBean()}.
+     * <i>Bean</i> objects created from scanned classes through the {@link getBean} method.
      */
     private final Map<Class<?>, Object> beans = new HashMap<>();
 
@@ -414,7 +423,7 @@ public class Runtime {
      * "java.util.*", "org.").
      * @param collector container to collect results
      * @param clazz starting class for traversal
-     * @param depth distance of a super-class from {@ code clazz}
+     * @param depth distance of a super-class from {@code clazz}
      * @return interfaces and super-classes to which {@code clazz} is assignable
      */
     private List<Class<?>> collectAssignables(List<Class<?>> collector, Class<?> clazz, int depth) {
@@ -577,14 +586,14 @@ public class Runtime {
     }
 
     /**
-     * Functional {@link Supplier<T>} interface that allows exceptions
-     * used by the {@link create()} method.
+     * Functional {@link java.util.function.Supplier} interface that allows exceptions
+     * used by the {@link create} method.
      * @param <T> generic result type obtained from supplier
      */
     @FunctionalInterface
     private interface SupplierWithExceptions<T> {
         /**
-         * {@link Supplier<T>} method to obtain result from supplier.
+         * {@link java.util.function.Supplier} method to obtain result from supplier.
          * @return result from supplier
          * @throws Exception potentially thrown by {@code T get()}
          */
@@ -596,6 +605,7 @@ public class Runtime {
      * an empty Optional instead: NoSuchMethodException, SecurityException,
      * InstantiationException, IllegalAccessException and InvocationTargetException.
      * @param <T> generic result type obtained from supplier
+     * @param cls class to create instance
      * @param supplier supplier that creates instance and may throw exception
      * @return created instance or empty Optional
      */
