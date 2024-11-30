@@ -16,14 +16,14 @@ and within this package a new class `Customer` from the UML definition:
 <img src="https://raw.githubusercontent.com/sgra64/se1-bestellsystem/refs/heads/markup/c2-customer/Customer.png" alt="drawing" width="600"/>
 
 The exact specification of methods can be found in the
-[*Customer Javadoc*](https://sgra64.github.io/se1.bestellsystem/D12-Datamodel/javadoc/se1.bestellsystem/datamodel/Customer.html).
+[*Customer Javadoc*](https://sgra64.github.io/se1-bestellsystem/c2-customer/se1.bestellsystem/datamodel/Customer.html).
 
 Read carefully about the behavior of methods, e.g. that method
-[*setId(long id)*](https://sgra64.github.io/se1.bestellsystem/D12-Datamodel/javadoc/se1.bestellsystem/datamodel/Customer.html#setId(long)) will sets the `id` only once when first called and leaving `id` value unchanged for subsequent invocations.
+[*setId(long id)*](https://sgra64.github.io/se1.bestellsystem/D12-Datamodel/javadoc/se1.bestellsystem/datamodel/Customer.html#setId(long)) will sets the `id` only once when first called leaving the `id` value unchanged for subsequent invocations.
 
 Read about [*method chaining*](https://www.geeksforgeeks.org/method-chaining-in-java-with-examples/)
-and see how it is used in class 
-[*Customer*](https://sgra64.github.io/se1.bestellsystem/D12-Datamodel/javadoc/se1.bestellsystem/datamodel/Customer.html).
+and understand how it is used in class 
+[*Customer*](https://sgra64.github.io/se1-bestellsystem/c2-customer/se1.bestellsystem/datamodel/Customer.html).
 
 Modify [*src/module-info.java*](https://github.com/sgra64/se1-bestellsystem/blob/main/src/module-info.java)
 to open and export the new package `datamodel`:
@@ -32,8 +32,8 @@ to open and export the new package `datamodel`:
 module se1.bestellsystem {
     opens application;      // open: package is accessible by JavaVM at runtime
     exports application;    // export: package is accessible to compile other modules
-    opens datamodel;        // open: package is accessible by JavaVM at runtime
-    exports datamodel;      // export: package is accessible to compile other modules
+    opens datamodel;
+    exports datamodel;
 
     requires org.junit.jupiter.api;     // JUnit-5 module for JUnit testing
     requires transitive org.slf4j;      // slf4j/log4j2 logging modules
@@ -155,10 +155,10 @@ Run the code in your IDE and in the terminal:
 mk run                          # run code
 ```
 
-Make sure you implemented `setId()` correctly such that it can
-only be set once (when first called, see:
-[*setId(long id) Javadoc*](https://sgra64.github.io/se1.bestellsystem/D12-Datamodel/javadoc/se1.bestellsystem/datamodel/Customer.html#setId(long))).
-Otherwise `id` values will not match the output below.
+Make sure you implemented `setId()` correctly such that it only sets
+the *id* once (when first called, see:
+[*setId(long id) Javadoc*](https://sgra64.github.io/se1-bestellsystem/c2-customer/se1.bestellsystem/datamodel/Customer.html#setId(long)).
+Otherwise *id* values will not match the output below.
 
 Output:
 
@@ -171,7 +171,7 @@ Output:
 ```
 
 Change the code such that it also outputs contacts.
-Package and run the final product (.jar):
+Package and run as a *.jar* (as final artefact of the *build process*):
 
 ```sh
 mk package                      # package code and run .jar
@@ -188,7 +188,7 @@ Output:
  - customer id: 456454, name: Abdelalim, Khaled Saad Mohamed, contacts: [+49 1524-12948210]
 ```
 
-Change the code such that it outputs customers in alphabetical order:
+Change the code such that it outputs customers in alphabetical last-name order:
 
 Output in alphabetical order:
 
@@ -205,17 +205,19 @@ Output in alphabetical order:
 
 ## 3. Create Javadoc for Class *Customer*
 
-Javadoc for Class *Customer* needs to be written as
-[Javadoc comments](https://de.wikipedia.org/wiki/Javadoc).
+Write javadoc for class *Customer* as so-called
+[*Java-doc-Strings*](https://de.wikipedia.org/wiki/Javadoc).
 
-Documentation for the package is included in a file `package-info.java`
-in package `datamodel`. Create this file with following content:
+Documentation for the
+[*datamodel package page*](https://sgra64.github.io/se1-bestellsystem/c2-customer/se1.bestellsystem/datamodel/package-summary.html)
+ is included in file `package-info.java` in the `datamodel` package.
+ Create this file with following content:
 
 ```java
 /**
  * Package with data model classes for the {@link se1.bestellsystem}.
  * <p>
- * The package provides classes for entities and relations managed by
+ * The package includes entity classes and relations managed by
  * the order processing application.
  * </p>
  * 
@@ -229,14 +231,14 @@ package datamodel;
 Make sure
 [*src/module-info.java*](https://github.com/sgra64/se1-bestellsystem/blob/main/src/module-info.java)
 has the new package `datamodel` opened and exported
-(see [*Step-1*](#1-create-class-customer)).
+(see [*Modify-module-info.java*](#1-create-class-customer)).
 
 The final Javadoc page should look like
-[*Customer Javadoc*](https://sgra64.github.io/se1.bestellsystem/D12-Datamodel/javadoc/se1.bestellsystem/datamodel/Customer.html):
+[*Customer Javadoc*](https://sgra64.github.io/se1-bestellsystem/c2-customer/se1.bestellsystem/datamodel/package-summary.html):
 
-Make sure, your name appears as `Author` (if not, change in: *src/application/package-info.java*):
+Make sure your name appears as `Author` ( if not, change in: *src/application/package-info.java* ):
 
-<img src="https://raw.githubusercontent.com/sgra64/se1-bestellsystem/refs/heads/markup/c2-customer/Customer_Javadoc.png" alt="drawing" width="600"/>
+<img src="Customer_Javadoc.png" alt="drawing" width="600"/>
 
 
 &nbsp;
@@ -253,6 +255,6 @@ git commit -m "c2: package 'datamodel' with class Customer.java"
 git push                        # push the commit to your upstream remote repository
 ```
 
-If you can't push, make sure you got
-[*Step-5: Check Project into Repository*](https://github.com/sgra64/se1-bestellsystem)
-right from the *se1-bestellsystem* project setup.
+If you can't push, verify
+[*Step-5: Check Project into Repository*](https://github.com/sgra64/se1-bestellsystem#5-check-project-into-own-repository)
+from the *se1-bestellsystem* project setup.

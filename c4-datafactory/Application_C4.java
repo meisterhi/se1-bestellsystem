@@ -10,8 +10,8 @@ import java.util.stream.IntStream;
 
 
 /**
- * Driver class for the <i>c4-customer</i> assignment. Class creates some
- * {@link Customer} objects and outputs some results.
+ * Driver class for the <i>c4-customer</i> assignment. Class creates {@link Customer}
+ * objects and prints a customer table.
  * Class implements the {@link Runtime.Runnable} interface.
  * 
  * @version <code style=color:green>{@value application.package_info#Version}</code>
@@ -20,13 +20,13 @@ import java.util.stream.IntStream;
 @Bean(priority=4)
 public class Application_C4 implements Runtime.Runnable {
 
-    /*
+    /**
      * Reference to {@link DataFactory} singleton.
      */
     private final DataFactory dataFactory = DataFactory.getInstance();
 
     /**
-     * None-public default constructor (avoid javadoc warning).
+     * None-public default constructor (to avoid javadoc warning).
      */
     public Application_C4() { }
 
@@ -53,9 +53,10 @@ public class Application_C4 implements Runtime.Runnable {
             dataFactory.createCustomer("Khaled Saad Mohamed Abdelalim", "+49 1524-12948210"),
             // 
             // attempts to create Customer objects from invalid arguments
-            dataFactory.createCustomer("Mandy Mondschein", "locomandy<>gmx.de") // invalid email address, no object is created
+            // invalid email address, no object is created
+            dataFactory.createCustomer("Mandy Mondschein", "locomandy<>gmx.de")
                 .map(c -> c.addContact("+49 030-3956256")), // and no other (valid) contact is added
-            dataFactory.createCustomer("", "nobody@gmx.de")     // invalid name, no object is created
+            dataFactory.createCustomer("", "nobody@gmx.de") // invalid name, no object is created
         //
         ).stream()
             .filter(c -> c.isPresent())
@@ -71,6 +72,9 @@ public class Application_C4 implements Runtime.Runnable {
 
         // fill objects as rows into Customer table
         customers.stream()
+            // @REMOVE
+            // .sorted((c1, c2) -> c1.getLastName().compareTo(c2.getLastName()))
+            // @/REMOVE
             .forEach(c -> {
                 String id=String.format("%d", c.getId());
                 String name=fmtCustomerName(c, 0);
@@ -103,18 +107,19 @@ public class Application_C4 implements Runtime.Runnable {
     /**
      * Format Customer name according to a format (0 is default):
      * <pre>
-     * fmt: 0: "Meyer, Eric"  10: "MEYER, ERIC"
-     *      1: "Eric Meyer"   11: "ERIC MEYER"
-     *      2: "Meyer, E."    12: "MEYER, E."
-     *      3: "E. Meyer"     13: "E. MEYER"
-     *      4: "Meyer"        14: "MEYER"
-     *      5: "Eric"         15: "ERIC"
+     * style: 0: "Meyer, Eric"  10: "MEYER, ERIC"
+     *        1: "Eric Meyer"   11: "ERIC MEYER"
+     *        2: "Meyer, E."    12: "MEYER, E."
+     *        3: "E. Meyer"     13: "E. MEYER"
+     *        4: "Meyer"        14: "MEYER"
+     *        5: "Eric"         15: "ERIC"
      * </pre>
      * @param customer Customer object
-     * @param fmt name formatting style
-     * @return formatted Customer name
+     * @param style name formatting style
+     * @return Customer name formatted according to the selcted style
+     * @throws IllegalArgumentException with null arguments
      */
-    public String fmtCustomerName(Customer customer, int... fmt) {
+    public String fmtCustomerName(Customer customer, int... style) {
         if(customer==null)
             throw new IllegalArgumentException("argument customer: null");
         //
@@ -122,7 +127,7 @@ public class Application_C4 implements Runtime.Runnable {
         String fn = customer.getFirstName();
         String fn1 = fn.length()==0? "" : fn.substring(0, 1).toUpperCase();
         //
-        final int ft = fmt.length > 0? fmt[0] : 0;  // 0 is default format
+        final int ft = style.length > 0? style[0] : 0;  // 0 is default format
         switch(ft) {    // 0 is default
         case 0: return String.format(fn.length() > 0? "%s, %s" : "%s", ln, fn);
         case 1: return String.format(fn.length() > 0? "%s %s" : "%s%s", fn, ln);
@@ -141,20 +146,20 @@ public class Application_C4 implements Runtime.Runnable {
     /**
      * Format Customer contacts according to a format (0 is default):
      * <pre>
-     * fmt: 0: first contact: "anne24@yahoo.de"
-     *      1: first contact with extension indicator: "anne24@yahoo.de, (+2 contacts)"
-     *      2: all contacts as list: "anne24@yahoo.de, (030) 3481-23352, fax: (030)23451356"
+     * style: 0: first contact: "anne24@yahoo.de"
+     *        1: first contact with extension indicator: "anne24@yahoo.de, (+2 contacts)"
+     *        2: all contacts as list: "anne24@yahoo.de, (030) 3481-23352, fax: (030)23451356"
      * </pre>
      * @param customer Customer object
-     * @param fmt name formatting style
-     * @return formatted Customer contact information
+     * @param style name formatting style
+     * @return Customer contact information formatted according to the selcted style
      */
-    public String fmtCustomerContacts(Customer customer, int... fmt) {
+    public String fmtCustomerContacts(Customer customer, int... style) {
         if(customer==null)
             throw new IllegalArgumentException("argument customer: null");
         //
         var len = customer.contactsCount();
-        final int ft = fmt.length > 0? fmt[0] : 0;  // 0 is default format
+        final int ft = style.length > 0? style[0] : 0;  // 0 is default format
         switch(ft) {    // 0 is default
         case 0:
             var it = customer.getContacts().iterator();
@@ -273,13 +278,21 @@ public class Application_C4 implements Runtime.Runnable {
          */
         public StringBuilder get() { return sb; }
 
-        /*
-         * private helper methods.
+        /**
+         * Fill table cell with provided text or spaces (blank cell).
+         * @param i column index
+         * @param text text to fill
+         * @param cellFiller upcall to format cell fitted to column
+         * @return fitted String with text or spaces
          */
         private String fillCell(int i, String text, Function<String, String> cellFiller) {
             return text != null? cellFiller.apply(text) : " ".repeat(widths.get(i));
         }
 
+        /**
+         * End row with trailing {@code "\n"}.
+         * @return chainable self-reference
+         */
         private TableFormatter endRow() { sb.append("\n"); return this; }
     }
 }

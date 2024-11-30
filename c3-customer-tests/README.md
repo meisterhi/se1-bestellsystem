@@ -5,40 +5,40 @@ This assignment demonstrates writing *JUnit* tests for the class *Customer*.
 The *Test Plan* for class *Customer* is structured in categories:
 
 1. *Constructor* - Tests (100) in file:
-    `Customer_100_Constructor_Tests.java` in package `datamodel` in `tests`.
+    *Customer_100_Constructor_Tests.java* in package `datamodel` in `tests`.
 
 1. *Id* - Tests (200) in file:
-    `Customer_200_Id_Tests.java` in same package.
+    *Customer_200_Id_Tests.java* in same package.
 
 1. *Name* - Tests (300) in file:
-    [Customer_300_Name_Tests.java](Customer_300_Name_Tests.java)
+    [*Customer_300_Name_Tests.java*](Customer_300_Name_Tests.java)
     in the same package.
 
 1. *Contacts* - Tests (400) in file:
-    [Customer_400_Contacts_Tests.java](Customer_400_Contacts_Tests.java)
+    [*Customer_400_Contacts_Tests.java*](Customer_400_Contacts_Tests.java)
     in the same package.
 
 1. Extended *Name* - Tests (500) in file:
-    [Customer_500_NameXXL_Tests.java](Customer_500_NameXXL_Tests.java)
+    [*Customer_500_NameXXL_Tests.java*](Customer_500_NameXXL_Tests.java)
     in the same package.
 
 
-Topics:
+Steps:
 
-1. [Create *Constructor* (100) Tests](#1-create-constructor-100-tests)
-1. [Create *Id* (200) Tests](#2-create-id-200-tests)
-1. [Run *Name* (300) Tests](#3-run-name-300-tests)
-1. [Run *Contacts* (400) Tests](#4-run-contacts-400-tests)
-1. [Run Extended *Name* (500) Tests](#5-run-extended-name-500-tests)
+1. [Create *Constructor* Tests (100)](#1-create-constructor-tests-100)
+1. [Create *Id* Tests (200)](#2-create-id-tests-200)
+1. [Run *Name* Tests (300)](#3-run-name-tests-300)
+1. [Run *Contacts* Tests (400)](#4-run-contacts-tests-400)
+1. [Run Extended *Name* Tests (500)](#5-run-extended-name-tests-500)
 1. [Run all *Customer* Tests](#6-run-all-customer-tests)
 1. [Commit and Push Changes](#7-commit-and-push-changes)
 
 
 &nbsp;
 
-## 1. Create *Constructor* (100) Tests
+## 1. Create *Constructor* Tests (100)
 
-*Constructor* (100) Tests test the constructor(s) of a class.
+*Constructor* tests (100) test the constructor(s) of a class.
 Class *Customer* has two constructors:
 
 ```java
@@ -48,17 +48,18 @@ Class *Customer* has two constructors:
 public Customer() { }
 
 /**
- * Constructor with single-String name argument.
- * @param name single-String Customer name, e.g. "Eric Meyer"
- * @throws IllegalArgumentException if name argument is null
+ * Constructor with single-String name argument, for example "Eric Meyer"
+ * (see method {@link splitName} for details).
+ * @param name single-String Customer name
+ * @throws IllegalArgumentException if name argument is null or empty
  */
 public Customer(String name) {
-    setName(name);  // throws IllegalArgumentException if name is null
+    setName(name);  // throws IllegalArgumentException if is null or empty
 }
 ```
 
-Create a new test class in package `datamodel` in `tests` with
-test methods for the default constructor:
+Create a new test class: *Customer_100_Constructor_Tests.java* in `tests`
+in a new package `datamodel` with test methods for the default constructor:
 
 ```java
 /**
@@ -114,18 +115,20 @@ public class Customer_100_Constructor_Tests {
 }
 ```
 
-Create test methods for more **regular test cases** constructing
-objects using the `Customer(String name)` constructor for:
+Next, create test methods for the `Customer(String name)` constructor
+constructing objects from a single-String *name* argument.
 
-- test case 110: `Customer c1 = new Customer("Eric Meyer");` -
+Consider **regular test cases** with *"regular"* single-String *name* arguments:
 
-- test case 111: `Customer c1 = new Customer("Meyer, Eric");` -
-    the exptected *firstName* is: `"Eric"` and *lastName*: `"Meyer"`.
+- test case 110: `Customer c1 = new Customer("Eric Meyer");`
 
-- test case 112: `Customer c1 = new Customer("Meyer");` -
-    the exptected *firstName* is: `""` (empty String) and *lastName*: `"Meyer"`.
+- test case 111: `Customer c1 = new Customer("Meyer, Eric");`
+    - the exptected *firstName* is: `"Eric"` and *lastName*: `"Meyer"`.
 
-with corresponding test-methods:
+- test case 112: `Customer c1 = new Customer("Meyer");`
+    - the exptected *firstName* is: `""` (empty String) and *lastName*: `"Meyer"`.
+
+Corresponding test-methods are:
 
 ```java
     /*
@@ -156,20 +159,23 @@ with corresponding test-methods:
     }
 ```
 
-Create test methods for **corner test cases** constructing
-objects with shortest or long(est) name arguments:
+Next, consider **corner test cases** constructing *Customer* objects from
+short(est) or long(est) allowed name arguments:
 
-- test case 120: `Customer c1 = new Customer("E M");` -
-    the exptected *firstName* is: `"E"` (empty String) and *lastName*: `"M"`.
+- test case 120: `Customer c1 = new Customer("E M");`
+    - the exptected *firstName* is: `"E"` (empty String) and *lastName*: `"M"`.
 
-- test case 121: `Customer c1 = new Customer("Nadine Ulla Maxine Adriane Blumenfeld");` -
-    the exptected *firstName* is: `"Nadine Ulla Maxine Adriane"` and *lastName*: `"Blumenfeld"`.
+- test case 121: `Customer c1 = new Customer("Nadine Ulla Maxine Adriane Blumenfeld");`
+    - the exptected *firstName* is: `"Nadine Ulla Maxine Adriane"` and
+        *lastName*: `"Blumenfeld"`.
 
-- test case 122: `Customer c1 = new Customer("Nadine Ulla Maxine Adriane von-Blumenfeld-Bozo");` -
-    the exptected *firstName* is: `"Nadine Ulla Maxine Adriane"` and *lastName*: `"von-Blumenfeld-Bozo"`.
+- test case 122: `Customer c1 = new Customer("Nadine Ulla Maxine Adriane von-Blumenfeld-Bozo");`
+    - the exptected *firstName* is: `"Nadine Ulla Maxine Adriane"` and
+        *lastName*: `"von-Blumenfeld-Bozo"`.
 
-- test case 123: `Customer c1 = new Customer("von-Blumenfeld-Bozo, Nadine Ulla Maxine Adriane");` -
-    the exptected *firstName* is: `"Nadine Ulla Maxine Adriane"` and *lastName*: `"von-Blumenfeld-Bozo"`.
+- test case 123: `Customer c1 = new Customer("von-Blumenfeld-Bozo, Nadine Ulla Maxine Adriane");`
+    - the exptected *firstName* is: `"Nadine Ulla Maxine Adriane"` and
+        *lastName*: `"von-Blumenfeld-Bozo"`.
 
 with corresponding test-methods:
 
@@ -217,17 +223,17 @@ with corresponding test-methods:
     }
 ```
 
-Create test methods for **exception test cases** constructing
-objects with empty or `null` name arguments:
+Create test methods for **exception test cases** attempting to construct
+objects from empty or `null` name arguments:
 
-- test case 130: `Customer c1 = new Customer("");` -
-    the exptected outcome is that an `IllegalArgumentException` is thrown
-    by the constructor with message: `"name empty"`.
+- test case 130: `Customer c1 = new Customer("");`
+    - the exptected outcome is that an `IllegalArgumentException` is thrown
+        by the constructor with message: `"name empty"`.
 
 
-- test case 131: `Customer c1 = new Customer(null);` -
-    the exptected outcome is that an `IllegalArgumentException` is thrown
-    by the constructor with message: `"name null"`.
+- test case 131: `Customer c1 = new Customer(null);`
+    - the exptected outcome is that an `IllegalArgumentException` is thrown
+        by the constructor with message: `"name null"`.
 
 ```java
     /*
@@ -254,9 +260,9 @@ objects with empty or `null` name arguments:
 
 &nbsp;
 
-## 2. Create *Id* (200) Tests
+## 2. Create *Id* Tests (200)
 
-*Id* (200) Tests test methods of class *Customer*:
+*Id* tests (200) test methods of class *Customer*:
 - `getId()`
 - `setId(long id)`
 
@@ -306,7 +312,7 @@ public class Customer_200_Id_Tests {
 
 &nbsp;
 
-## 3. Run *Name* (300) Tests
+## 3. Run *Name* Tests (300)
 
 *Name* (300) Tests test methods of class *Customer*:
 - `getFirstName()`
@@ -323,7 +329,7 @@ do not pass.
 
 &nbsp;
 
-## 4. Run *Contacts* (400) Tests
+## 4. Run *Contacts* Tests (400)
 
 *Contacts* (400) Tests test methods of class *Customer*:
 - `contactsCount()`
@@ -341,12 +347,12 @@ do not pass.
 
 &nbsp;
 
-## 5. Run Extended *Name* (500) Tests
+## 5. Run Extended *Name* Tests (500)
 
 Extended *Name* (500) Tests test name-related methods of class *Customer*
 with some extreme names.
 
-Install [Customer_500_NameXXL_Tests.java](Customer_500_NameXXL_Tests.java)
+Install [*Customer_500_NameXXL_Tests.java*](Customer_500_NameXXL_Tests.java)
 in package `datamodel` in `tests` and run tests.
 
 Fix the tested code (your implementation of class *Customer*) if tests

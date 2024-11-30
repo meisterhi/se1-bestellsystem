@@ -1,11 +1,11 @@
 # C4: *DataFactory*
 
 The assignment demonstrates two basic
-[Software Design Patterns](https://refactoring.guru/design-patterns):
+[*Software Design Patterns*](https://refactoring.guru/design-patterns):
 *Singleton* and *Factory*.
 
 - A new class *DataFactory* centralizes the creation of objects of classes
-    from package `datamodel`, e.g. of class *Customer*.
+    from package `datamodel`, e.g. objects of class *Customer*.
 
 - *DataFactory* implements the *"lazy"*
     [*Singleton*](https://en.wikipedia.org/wiki/Singleton_pattern)
@@ -13,11 +13,13 @@ The assignment demonstrates two basic
     [*Factory*](https://refactoring.guru/design-patterns/factory-method)
     methods for the creation of *Customer* objects.
 
-- *Customer* objects can no longer be created with *new*. *DataFactory*
+- *Customer* objects can no longer be created from outside the `datamodel`
+    package from constructors with *new*. *DataFactory's* *create()* methods
     will be used instead.
 
 The change allows restructuring class *Customer* into an *immutable* class,
-which means its attributes can no longer be changed.
+which means its attributes can no longer be altered or changed.
+*Immutable* classes have no *setter*-methods.
 
 Steps:
 
@@ -32,43 +34,93 @@ Steps:
 
 ## 1. Create a Singleton Class: *DataFactory*
 
-Creating objects of *data classes* from the package `datamodel` with *new()*
-(constructors) has disadvantages:
+The direct creation of objects of *data classes* from the package `datamodel`
+with *new()* (constructors) has disadvantages:
 
-- objects can be created with invalid attributes, e.g. Customer objects
-    with *name:* `null` or *name:* `""`,
+- Objects can be created with invalid attributes, e.g. Customer objects
+    with *name:* `null` or an empty *name:* `""`. A constructor will always
+    create an object, unless it throws an Exception such as
+    [*IllegalArgumentException*](https://docs.oracle.com/javase/8/docs/api/java/lang/IllegalArgumentException.html), which will terminate the program if not
+    caught.
 
-- uniqueness of *id* attributes cannot be guaranteed across objects,
+- Uniqueness of *id*-attributes cannot be guaranteed across objects, if *id*
+    are supplied as arguments and can arbitrarily be set.
 
-- *data classes* contain logic, e.g. the separation of single-String names
-    into first- and last name attributes.
+- Validating arguments in methods introduces logic into "data classes* that
+    should be be there. *Data classes* should represent a data model, not logic.
+
+    An example is the separation of single-String names in class *Customer*
+    into first- and last name attributes. Rules of name separation and code
+    should not be in the data class *Customer*.
 
 Furthermore, attributes of objects of *data classes* should not arbitrarily
-be modified after creation, e.g. names set to null: *setName(null)*.
+be modified after creation, e.g. *id* set to other values changing the identity
+of an object or names set to null.
 
 A common approach to address these problems is to centralize *object creation*
-at a central place: `DataFactory.java`.
+at a central place: `DataFactory.java`. Purpose if a factory is to create objects.
 
-- The class exists as a *singleton*, which means at most one instance of this
-    class will exist. This is indicated in the UML class diagram by stereotype:
-    `<<singleton>>`.
+- Class *DataFactory* exists as a *singleton*, which means there exists at most
+    one instance of the class. This is indicated by stereotype: `<<singleton>>`
+    in the UML class diagram.
 
-- *DataFactory* includes automatic generation of *Customer* *id* attributes,
-    which are managed in an `IdPool<T>` that assumes some initially provided *id*
-    and then expands as *id* are consumed by newly created *Customer* objects.
+- *DataFactory* provides unique *id* attributes when new *Customer* objects are
+    created. An internal `IdPool<T>` guarantees the uniqueness of *id* of a
+    generic type `<T>` (`T`: *Long* is used for *Customer* *id*, class *Article*
+    will use *String* for *id*).
 
-    *IdPool* is of a generic type `<T>` taking into account that later classes
-    will use `String` and `Long` values for *id*.
+    Each data model class has its own *IdPool*. Each pool is provided with some
+    initial *id* and expands by random-generated *id* as objects are created by
+    *DataFactory*.
 
-- Furthermore, splitting of single-String names, e.g. `"Eric Meyer"` into
-    last name: `"Meyer"` and first name: `"Eric"` has been moved out of class
-    *Customer* into mathod: `Optional<NameParts> validateSplitName(name String)`.
-    This method return a valid pair of *first* and *last name* parts, if the input
-    *name* could sucessfully be split and name parts are valid. Only then, a
-    `NameParts` object is returned in the `Optional<NameParts>`.
+    ```java
+    /**
+     * {@link IdPool} for {@link Customer} objects with 6-digit random numbers.
+     */
+    private final IdPool<Long> customerIdPool = new IdPool<>(
+        () -> 100000L + rand.nextLong(900000L),
+        Arrays.asList(  // initial Customer ids
+            892474L, 643270L, 286516L, 412396L, 456454L, 651286L
+        )
+    );
+    ```
 
-The UML Class Diagram shows the new *DataFactory* class with associated inner
-class: *IdPool* and Record *NameParts:*
+- Furthermore, splitting single-String names, e.g. `"Eric Meyer"` into
+    *last name:* `"Meyer"` and *first name:* `"Eric"` has been moved
+    out of class *Customer* into class *DataFactory*.
+
+    First and last name parts are represented by a Java structure
+    [*Record*](https://medium.com/@mak0024/a-comprehensive-guide-to-java-records-2e8edcbd9c75):
+
+    ```java
+    /**
+     * Record of first and last name parts of a name.
+     * @param first first name parts
+     * @param last last name parts
+     */
+    public record NameParts(String first, String last) { }
+    ```
+
+    Factory-method: `validateSplitName(String name)` splits a single-String name and vaidates
+    name parts. With valid first- and last name parts, `NameParts` is returned in an Optional,
+    otherwise an empty Optional is returned.
+
+    ```java
+    /**
+     * Split single-String name into first and last name parts and validate parts,
+     * e.g. "Meyer, Eric" is split into first: "Eric" and last name: "Meyer".
+     */
+    public Optional<NameParts> validateSplitName(String name) {
+        ...
+    }
+    ```
+
+The Javadoc of class *DataFactory* can be found at
+[*DataFactory.html*](https://sgra64.github.io/se1-bestellsystem/c4-datafactory/se1.bestellsystem/datamodel/DataFactory.html)
+defining validation rules.
+
+The UML Class Diagram shows the new *DataFactory* class with inner class: *IdPool*
+(*composition:* black diamond) and Record *NameParts:*
 
 <img src="DataFactory.png" alt="drawing" width="800"/>
 
@@ -98,16 +150,15 @@ Create a class `DataFactory.java` in the package `datamodel` such that it:
      * <i>Factory</i> method to create an object of class {@link Customer}
      * from validated parameters. The <i>id</i> attribute is internally
      * provided. No object is created when arguments are not valid.
-     * @param name single-String name parameter, invalid if null or empty,
-     *          example: "Eric Meyer" or "Meyer, Eric"
+     * @param name single-String name parameter
      * @param contact contact parameter validated as an email address
-     *          containing '@' or a phone number, invalid if null or empty
+     *  containing '@' or a phone number, invalid if null or empty
      * @return created {@link Customer} object with valid parameters or empty
      */
     public Optional<Customer> createCustomer(String name, String contact) {
         var nameParts = validateSplitName(name);
         if(nameParts.isPresent()) {
-            long id = customerIdSupplier.next();
+            long id = customerIdPool.next();
             var validContact = validateContact(contact);
             if(validContact.isPresent()) {
                 // only create Customer when all conditions are met
@@ -123,20 +174,15 @@ Create a class `DataFactory.java` in the package `datamodel` such that it:
 1. Supplement class `DataFactory.java` with code for the generation of unique *id's*:
 
     ```java
-    /*
-    * Static {@link DataFactory} <i>Singleton</i> instance (<i>lazy</i> pattern).
-    */
-    private static DataFactory singleton = null;
-
-    /*
-    * Random generator.
-    */
+    /**
+     * Random generator.
+     */
     private final Random rand = new Random();
 
-    /*
-    * Supplier for {@link Customer} id of 6-digit random numbers.
-    */
-    private IdPool<Long> customerIdSupplier = new IdPool<>(
+    /**
+     * {@link IdPool} for {@link Customer} objects with 6-digit random numbers.
+     */
+    private final IdPool<Long> customerIdPool = new IdPool<>(
         () -> 100000L + rand.nextLong(900000L),
         Arrays.asList(  // initial Customer ids
             892474L, 643270L, 286516L, 412396L, 456454L, 651286L
@@ -145,12 +191,22 @@ Create a class `DataFactory.java` in the package `datamodel` such that it:
 
     /**
      * Internal class to manage pool of unique {@code ids} of type {@code T}.
-     */
+     * param T generic type of id
+      * @param <T> The type of {@code ids} maintained in the pool.
+      */
     private class IdPool<T> {
-        private final Supplier<T> supplier; // supplier for id's of type {@code T}
-        private final List<T> pool; // pool of used or available id
-        private int i=0;            // [0..i-1]: used id, [i..cap-1]: available id
-        private int capacity;       // pool capacity
+
+        /** supplier for id's of type {@code T} */
+        private final Supplier<T> supplier;
+
+        /** pool of used or available id */
+        private final List<T> pool;
+
+        /** [0..i-1]: used id, [i..cap-1]: available id */
+        private int i=0;
+
+        /** pool capacity */
+        private int capacity;
 
         /**
          * Constructor of id pool of {@code T}.
@@ -184,25 +240,25 @@ Create a class `DataFactory.java` in the package `datamodel` such that it:
     *name* and *contact* validation:
 
     ```java
-    /*
-    * Regular expression to validate a name or name parts. A valid
-    * name must start with a letter, followed by a combination of
-    * letters, "-", "." or white spaces. Valid names are: "E", "E.",
-    * "Eric", "Ulla-Nadine", "Eric Meyer", "von-Blumenfeld".
-    * Names do not include numbers or other special characters.
-    * For the use of regular expressions, see
-    * https://stackoverflow.com/questions/8204680/java-regex-email
-    */
+    /**
+     * Regular expression to validate a name or name parts. A valid name must
+     * start with a letter, followed by a combination of letters, "-", "." or
+     * white spaces. Valid names are: "E", "E.", "Eric", "Ulla-Nadine",
+     * "Eric Meyer", "von-Blumenfeld". Names do not include numbers or other
+     * special characters.
+     * For the use of regular expressions, see
+     * https://stackoverflow.com/questions/8204680/java-regex-email
+     */
     private final Pattern nameRegex =
         Pattern.compile("^[A-Za-z][A-Za-z-\\s.]*$");
 
-    /*
+    /**
      * Regular expression to validate an email address.
      */
     private final Pattern emailRegex =
         Pattern.compile("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z0-9_]+$", Pattern.CASE_INSENSITIVE);
 
-    /*
+    /**
      * Regular expression to validate a phone or fax number.
      */
     private final Pattern phoneRegex =
@@ -216,15 +272,14 @@ Create a class `DataFactory.java` in the package `datamodel` such that it:
      * Validate contact for acceptable email address or phone number and
      * return contact or empty result.
      * <br>
-     * The validation rule for an <i>email address</i> is defined by a
-     * regular expression:
-     *      {@code "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z0-9_]+$"}.
-     * <br>
-     * The vaidation rule for an <i>phone number</i> is defined by:
-     *      {@code "^(phone:|fax:|\\+[0-9]+){0,1}\\s*[\\s0-9()][\\s0-9()-]*"}.
-     * <br>
-     * Leading and traling whitespaces and quotes are trimmed from contact
-     * before validation.
+     * Rules for validating a <i>email</i> addresses and <i>phone</i>
+     * numbers are defined by regular expressions:
+     * <ul>
+     * <li> <i>email address:</i> {@code "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z0-9_]+$"}.
+     * <li> <i>phone number:</i> {@code "^(phone:|fax:|\\+[0-9]+){0,1}\\s*[\\s0-9()][\\s0-9()-]*"}.
+     * <li> leading and trailing white spaces {@code [\s]}, commata {@code [,;]}
+     *      and quotes {@code ["']} are trimmed from contacts before validation.
+     * </ul>
      * @param contact contact to validate
      * @return possibly modified (e.g. dequoted, trimmed) valid contact or empty result
      */
@@ -256,15 +311,32 @@ Create a class `DataFactory.java` in the package `datamodel` such that it:
      * "Ulla-Nadine", "Eric Meyer", "von-Blumenfeld".
      * Names do not include numbers or other special characters.
      * <br>
-     * The validation rule for a <i>name</i> is defined by a regular
-     * expression:
-     *      {@code "^[A-Za-z][A-Za-z-\\s.]*$"}.
-     * Leading and traling whitespaces and quotes are trimmed from name
-     * before validation.
-     * 
+     * Rules for validating a <i>name</i> are defined by a regular expression:
+     * <ul>
+     * <li> {@code "^[A-Za-z][A-Za-z-\\s.]*$"}.
+     * <li> leading and trailing white spaces {@code [\s]}, commata {@code [,;]} and
+     *      quotes {@code ["']} are trimmed from names before validation, e.g.
+     *      {@code "  'Schulz-Müller, Tim Anton'  "}.
+     * </ul>
+     * <pre>
+     * Examples:
+     * +------------------------------------+---------------------------------------+
+     * |name to validate                    |valid, possibly modified name          |
+     * +------------------------------------+---------------------------------------+
+     * |"Eric"                              |"Eric"                                 |
+     * |"Ulla-Nadine"                       |"Ulla-Nadine"                          |
+     * |"E", "E.", "von-A"                  |"E", "E.", "von-A"                     |
+     * +------------------------------------+---------------------------------------+
+     *
+     * Trim leading, trailing white spaces and quotes:
+     * +------------------------------------+---------------------------------------+
+     * |"  Anne  "   (lead/trailing spaces) |"Anne"                                 |
+     * |"  'Meyer'  "   (quotes)            |"Meyer"                                |
+     * +------------------------------------+---------------------------------------+
+     * </pre>
      * @param name name to validate
      * @param acceptEmptyName accept empty ("") name, e.g. as first name
-     * @return possibly modified (e.g. dequoted, trimmed) valid name or empty result
+     * @return valid, possibly modified (e.g. dequoted, trimmed) name or empty result
      */
     public Optional<String> validateName(String name, boolean acceptEmptyName) {
         if(name != null) {
@@ -276,7 +348,7 @@ Create a class `DataFactory.java` in the package `datamodel` such that it:
     }
 
     /**
-     * Record of a name with first and last name parts.
+     * Record of first and last name parts of a name.
      * @param first first name parts
      * @param last last name parts
      * @hidden exclude from documentation
@@ -286,10 +358,46 @@ Create a class `DataFactory.java` in the package `datamodel` such that it:
     /**
      * Split single-String name into first and last name parts and
      * validate parts, e.g. "Meyer, Eric" is split into first: "Eric"
-     * and last name: "Meyer". Both parts are validated by method
-     * {@link validateName}().
-     * @param name single-String name
-     * @return record with validated first and last name parts
+     * and last name: "Meyer".
+     * <br>
+     * Rules of splitting a single-String name into last- and first name parts:
+     * <ul>
+     * <li> if a name contains no seperators (comma or semicolon {@code [,;]}), the trailing
+     *      consecutive part is the last name, all prior parts are first name parts, e.g.
+     *      {@code "Tim Anton Schulz-Müller"}, splits into <i>first name:</i>
+     *      {@code "Tim Anton"} and <i>last name:</i> {@code "Schulz-Müller"}.
+     * <li> names with seperators (comma or semicolon {@code [,;]}) split into a last name
+     *      part before the seperator and a first name part after the seperator, e.g.
+     *      {@code "Schulz-Müller, Tim Anton"} splits into <i>first name:</i>
+     *      {@code "Tim Anton"} and <i>last name:</i> {@code "Schulz-Müller"}.
+     * <li> leading and trailing white spaces {@code [\s]}, commata {@code [,;]} and quotes
+     *      {@code ["']} are trimmed from names before validation, e.g.
+     *      {@code "  'Schulz-Müller, Tim Anton'  "}.
+     * <li> interim white spaces between name parts are removed, e.g.
+     *      {@code "Schulz-Müller, <white-spaces> Tim <white-spaces> Anton <white-spaces> "}.
+     * </ul>
+     * <pre>
+     * Examples:
+     * +------------------------------------+-------------------+-------------------+
+     * |Single-String name                  |first name parts   |last name parts    |
+     * +------------------------------------+-------------------+-------------------+
+     * |"Eric Meyer"                        |"Eric"             |"Meyer"            |
+     * |"Meyer, Anne"                       |"Anne"             |"Meyer"            |
+     * |"Meyer; Anne"                       |"Anne"             |"Meyer"            |
+     * |"Tim Schulz‐Mueller"                |"Tim"              |"Schulz‐Mueller"   |
+     * |"Nadine Ulla Blumenfeld"            |"Nadine Ulla"      |"Blumenfeld"       |
+     * |"Nadine‐Ulla Blumenfeld"            |"Nadine‐Ulla"      |"Blumenfeld"       |
+     * |"Khaled Mohamed Abdelalim"          |"Khaled Mohamed"   |"Abdelalim"        |
+     * +------------------------------------+-------------------+-------------------+
+     *
+     * Trim leading, trailing and interim white spaces and quotes:
+     * +------------------------------------+-------------------+-------------------+
+     * |" 'Eric Meyer'  "                   |"Eric"             |"Meyer"            |
+     * |"Nadine     Ulla     Blumenfeld"    |"Nadine Ulla"      |"Blumenfeld"       |
+     * +------------------------------------+-------------------+-------------------+
+     * </pre>
+     * @param name single-String name to split into first- and last name parts
+     * @return record with valid, possibly modified (e.g. dequoted, trimmed) first and last name parts or empty result
      */
     public Optional<NameParts> validateSplitName(String name) {
         if(name != null && name.length() > 0) {
@@ -333,6 +441,8 @@ Create a class `DataFactory.java` in the package `datamodel` such that it:
         return s;
     }
     ```
+
+Class *DataFactory* should compile at this stage.
 
 
 &nbsp;
@@ -550,7 +660,7 @@ is shown below. Arguments of `createCustomer(...)` are now validated.
 In case of invalid arguments, empty Optionals are returned:
 
 ```java
-/*
+/**
  * Reference to {@link DataFactory} singleton.
  */
 private final DataFactory dataFactory = DataFactory.getInstance();
@@ -578,9 +688,10 @@ public void run(Properties properties, String[] args) {
         dataFactory.createCustomer("Khaled Saad Mohamed Abdelalim", "+49 1524-12948210"),
         // 
         // attempts to create Customer objects from invalid arguments
-        dataFactory.createCustomer("Mandy Mondschein", "locomandy<>gmx.de") // invalid email address, no object is created
+        // invalid email address, no object is created
+        dataFactory.createCustomer("Mandy Mondschein", "locomandy<>gmx.de")
             .map(c -> c.addContact("+49 030-3956256")), // and no other (valid) contact is added
-        dataFactory.createCustomer("", "nobody@gmx.de")     // invalid name, no object is created
+        dataFactory.createCustomer("", "nobody@gmx.de") // invalid name, no object is created
     //
     ).stream()
         .filter(c -> c.isPresent())
@@ -617,7 +728,7 @@ public void run(Properties properties, String[] args) {
 ```
 
 Fetch the complete driver class
-[*Application_C4.java*](https://github.com/sgra64/se1-bestellsystem/blob/markup/c4-datafactory/Application_C4.java)
+[*Application_C4.java*](Application_C4.java)
 and install in the `application` package.
 
 Running the program outputs the table of *Customer* objects that could be
