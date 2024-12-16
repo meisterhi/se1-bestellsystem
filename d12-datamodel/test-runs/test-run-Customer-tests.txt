@@ -1,0 +1,85 @@
+╷
+├─ JUnit Jupiter ✔
+│  ├─ Customer_100_FactoryCreate_Tests ✔
+│  │  ├─ test100_DataFactorySingleton() ✔
+│  │  ├─ test101_DefaultDataFactoryChainableSetters() ✔
+│  │  ├─ test110_DataFactoryCreateWithRegularFirstLastName() ✔
+│  │  ├─ test111_DataFactoryCreateWithRegularLastCommaFirstName() ✔
+│  │  ├─ test112_DataFactoryCreateWithRegularLastNameOnly() ✔
+│  │  ├─ test120_DataFactoryCreateWithCornerShortestPossibleFirstAndLastName() ✔
+│  │  ├─ test121_DataFactoryCreateWithLongFirstAndLastName() ✔
+│  │  ├─ test122_DataFactoryCreateWithLongFirstAndMultipartLastName() ✔
+│  │  ├─ test123_DataFactoryCreateWithLongMultipartLastNameAndFirstName() ✔
+│  │  ├─ test130_DataFactoryCreateWithEmptyName() ✔
+│  │  ├─ test131_DataFactoryCreateWithNullName() ✔
+│  │  ├─ test132_DataFactoryCreateWithEmptyContact() ✔
+│  │  ├─ test133_DataFactoryCreateWithNullContact() ✔
+│  │  ├─ test140_DataFactoryCreateInvalidName() ✔
+│  │  ├─ test150_DataFactoryCreateInvalidEmailContact() ✔
+│  │  └─ test160_DataFactoryCreateInvalidPhoneContact() ✔
+│  ├─ Customer_200_Id_Tests ✔
+│  │  └─ test200_getId() ✔
+│  ├─ Customer_300_Name_Tests ✔
+│  │  ├─ test300_getNameFirstAndLastName() ✔
+│  │  ├─ test301_getNameFirstAndLastName() ✔
+│  │  ├─ test302_getNameFirstAndLastName() ✔
+│  │  ├─ test303_getNameFirstAndLastName() ✔
+│  │  ├─ test310_getNameSingleName() ✔
+│  │  ├─ test311_getNameSingleName() ✔
+│  │  ├─ test312_getNameSingleName() ✔
+│  │  ├─ test313_getNameSingleName() ✔
+│  │  ├─ test320_getNameDoubleLastName() ✔
+│  │  ├─ test321_getNameDoubleLastName() ✔
+│  │  ├─ test322_getNameDoubleLastName() ✔
+│  │  ├─ test330_getNameSingleArgumentConstructor() ✔
+│  │  ├─ test331_getNameSingleArgumentConstructor() ✔
+│  │  ├─ test332_getNameSingleArgumentConstructor() ✔
+│  │  ├─ test333_getNameSingleArgumentConstructor() ✔
+│  │  ├─ test334_getNameSingleArgumentConstructor() ✔
+│  │  └─ test335_getNameSingleArgumentConstructor() ✔
+│  ├─ Customer_400_Contacts_Tests ✔
+│  │  ├─ test400_addContactsRegularCases() ✔
+│  │  ├─ test401_addContactsCornerCases() ✔
+│  │  ├─ test402_addContactsCornerCases() ✔
+│  │  ├─ test403_addContactsMinimumLength() ✔
+│  │  ├─ test404_addContactsIgnoreDuplicates() ✔
+│  │  ├─ test410_deleteContactRegularCases() ✔
+│  │  ├─ test411_deleteContactOutOfBoundsCases() ✔
+│  │  └─ test412_deleteAllContacts() ✔
+│  └─ Customer_500_NameXXL_Tests ✔
+│     ├─ test500_getNameMultipartLastName() ✔
+│     ├─ test501_getNameMultipartLastName() ✔
+│     ├─ test502_getNameMultipartLastName() ✔
+│     ├─ test510_getNameDoubleFirstName() ✔
+│     ├─ test511_getNameDoubleFirstName() ✔
+│     ├─ test512_getNameDoubleFirstName() ✔
+│     ├─ test520_getNameMultipartFirstNames() ✔
+│     ├─ test521_getNameMultipartFirstNames() ✔
+│     ├─ test522_getNameMultipartFirstNames() ✔
+│     ├─ test530_getNameMultipartFirstNames() ✔
+│     ├─ test531_getNameMultipartNames() ✔
+│     ├─ test550_getNameMultiDashMultipartFirstNames() ✔
+│     ├─ test551_getNameMultiDashMultipartFirstNames() ✔
+│     ├─ test552_getNameMultipartNames() ✔
+│     ├─ test553_getNameMultiDashMultipartFirstNames() ✔
+│     ├─ test560_getNameExtremeLongNames() ✔
+│     ├─ test561_getNameExtremeLongNames() ✔
+│     └─ test562_getNameExtremeLongNames() ✔
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+
+Test run finished after 327 ms
+[         8 containers found      ]
+[         0 containers skipped    ]
+[         8 containers started    ]
+[         0 containers aborted    ]
+[         8 containers successful ]
+[         0 containers failed     ]
+[        60 tests found           ]
+[         0 tests skipped         ]
+[        60 tests started         ]
+[         0 tests aborted         ]
+[        60 tests successful      ]
+[         0 tests failed          ]
+
+done.
