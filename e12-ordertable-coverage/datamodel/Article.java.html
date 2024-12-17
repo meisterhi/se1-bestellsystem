@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Article.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCo Coverage Report</a> &gt; <a href="index.source.html" class="el_package">datamodel</a> &gt; <span class="el_source">Article.java</span></div><h1>Article.java</h1><pre class="source lang-java linenums">package datamodel;
+
+
+/**
+ * Immutable entity class representing an &lt;i&gt;Article&lt;/i&gt;, which is a product
+ * referred to in orders.
+ * &lt;br&gt;
+ * An &lt;i&gt;immutable&lt;/i&gt; class does not allow changes to attributes.
+ * {@link DataFactory} is the only class that creates {@link Article}
+ * objects from validated arguments.
+ * 
+ * @version &lt;code style=color:green&gt;{@value application.package_info#Version}&lt;/code&gt;
+ * @author &lt;code style=color:blue&gt;{@value application.package_info#Author}&lt;/code&gt;
+ */
+public final class Article {
+
+    /**
+     * Unique Article identifier. Must not be {@code null}.
+     */
+    private final String id;
+
+    /**
+     * Article description. Must not be {@code null} and not empty {@code &quot;&quot;}.
+     */
+    private final String description;
+
+    /**
+     * None-public constructor used by {@link DataFactory} preventing object
+     * creation outside this package.
+     * @param id article identifier supplied by {@link DataFactory}
+     * @param description article description
+     * @throws IllegalArgumentException if arguments are {@code null} or
+     * description is empty {@code &quot;&quot;}
+     */
+<span class="fc" id="L35">    protected Article(String id, String description) {</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if(id==null)</span>
+<span class="nc" id="L37">            throw new IllegalArgumentException(&quot;id null&quot;);</span>
+<span class="pc bpc" id="L38" title="2 of 4 branches missed.">        if(description==null || description.length()==0)</span>
+<span class="nc" id="L39">            throw new IllegalArgumentException(&quot;description null or empty&quot;);</span>
+        //
+<span class="fc" id="L41">        this.id = id;</span>
+<span class="fc" id="L42">        this.description = description;</span>
+<span class="fc" id="L43">    }</span>
+
+    /**
+     * Id attribute getter.
+     * @return article id
+     */
+    public String getId() {
+<span class="fc" id="L50">        return id;</span>
+    }
+
+    /**
+     * Description attribute getter.
+     * @return article description
+     */
+    public String getDescription() {
+<span class="fc" id="L58">        return description;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

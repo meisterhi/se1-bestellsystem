@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCo Coverage Report</a> &gt; <a href="index.source.html" class="el_package">datamodel</a> &gt; <span class="el_source">DataFactory.java</span></div><h1>DataFactory.java</h1><pre class="source lang-java linenums">package datamodel;
+
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import datamodel.Pricing.PricingCategory;
+import datamodel.Pricing.TAXRate;
+
+
+/**
+ * &lt;i&gt;Factory&lt;/i&gt; class with &lt;i&gt;create()-&lt;/i&gt;methods to instantiate objects
+ * of classes of the &lt;i&gt;datamodel&lt;/i&gt; package from validated parameters.
+ * Objects are only created from valid parameters (e.g. names, email or
+ * phone contacts).
+ * &lt;br&gt;
+ * &lt;i&gt;DataFactory&lt;/i&gt; itself exists as a &lt;i&gt;(&quot;lazy&quot;) singleton&lt;/i&gt; instance.
+ * 
+ * @version &lt;code style=color:green&gt;{@value application.package_info#Version}&lt;/code&gt;
+ * @author &lt;code style=color:blue&gt;{@value application.package_info#Author}&lt;/code&gt;
+ */
+public class DataFactory {
+
+    /**
+     * Static {@link DataFactory} &lt;i&gt;Singleton&lt;/i&gt; instance (&lt;i&gt;lazy&lt;/i&gt; pattern).
+     */
+<span class="fc" id="L30">    private static DataFactory singleton = null;</span>
+
+    /**
+     * Random generator.
+     */
+<span class="fc" id="L35">    private final Random rand = new Random();</span>
+
+    /**
+     * {@link IdPool} for {@link Customer} objects with 6-digit random numbers.
+     */
+<span class="fc" id="L40">    private final IdPool&lt;Long&gt; customerIdPool = new IdPool&lt;&gt;(</span>
+<span class="fc" id="L41">        () -&gt; 100000L + rand.nextLong(900000L),</span>
+<span class="fc" id="L42">        Arrays.asList(  // initial Customer ids</span>
+<span class="fc" id="L43">            892474L, 643270L, 286516L, 412396L, 456454L, 651286L</span>
+        )
+    );
+
+    /*
+     * {@link IdPool} for {@link Article} objects with 6-digit numbers prefixed
+     * with &quot;SKU-&quot; (stock-keeping unit).
+     */
+<span class="fc" id="L51">    private IdPool&lt;String&gt; articleIdPool = new IdPool&lt;&gt;(</span>
+<span class="fc" id="L52">        () -&gt; String.format(&quot;SKU-%d&quot;, 100000 + rand.nextInt(900000)),</span>
+<span class="fc" id="L53">        Arrays.asList(  // initial Article ids</span>
+<span class="fc" id="L54">            &quot;SKU-458362&quot;, &quot;SKU-693856&quot;, &quot;SKU-518957&quot;, &quot;SKU-638035&quot;, &quot;SKU-278530&quot;,</span>
+<span class="fc" id="L55">            &quot;SKU-425378&quot;, &quot;SKU-300926&quot;, &quot;SKU-663942&quot;, &quot;SKU-583978&quot;</span>
+        )
+    );
+
+    /*
+     * {@link IdPool} for {@link Customer} objects with 10-digit random numbers.
+     */
+<span class="fc" id="L62">    private IdPool&lt;Long&gt; orderIdPool = new IdPool&lt;&gt;(</span>
+<span class="fc" id="L63">        () -&gt; 1000000000L + rand.nextLong(9000000000L),</span>
+<span class="fc" id="L64">        Arrays.asList(  // initial Order ids</span>
+<span class="fc" id="L65">            8592356245L, 3563561357L, 5234968294L, 6135735635L, 6173043537L,</span>
+<span class="fc" id="L66">            7372561535L, 4450305661L</span>
+        )
+    );
+
+    /**
+     * Regular expression to validate a name or name parts. A valid name must
+     * start with a letter, followed by a combination of letters, &quot;-&quot;, &quot;.&quot; or
+     * white spaces. Valid names are: &quot;E&quot;, &quot;E.&quot;, &quot;Eric&quot;, &quot;Ulla-Nadine&quot;,
+     * &quot;Eric Meyer&quot;, &quot;von-Blumenfeld&quot;. Names do not include numbers or other
+     * special characters.
+     * For the use of regular expressions, see
+     * https://stackoverflow.com/questions/8204680/java-regex-email
+     */
+<span class="fc" id="L79">    private final Pattern nameRegex =</span>
+<span class="fc" id="L80">        Pattern.compile(&quot;^[A-Za-z][A-Za-z-\\s.]*$&quot;);</span>
+
+    /**
+     * Regular expression to validate an email address.
+     */
+<span class="fc" id="L85">    private final Pattern emailRegex =</span>
+<span class="fc" id="L86">        Pattern.compile(&quot;^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z0-9_]+$&quot;, Pattern.CASE_INSENSITIVE);</span>
+
+    /**
+     * Regular expression to validate a phone or fax number.
+     */
+<span class="fc" id="L91">    private final Pattern phoneRegex =</span>
+<span class="fc" id="L92">        Pattern.compile(&quot;^(phone:|fax:|\\+[0-9]+){0,1}\\s*[\\s0-9()][\\s0-9()-]*&quot;, Pattern.CASE_INSENSITIVE);</span>
+
+    /*
+     * Lower bound of valid order creation date: {@code &quot;Jan 01, 2020 00:00:00&quot;}
+     */
+<span class="fc" id="L97">    private final LocalDateTime lowerOrderCreationDate = LocalDateTime.of(2020,1,1,0,0,0);</span>
+
+    /*
+     * Upper bound of valid order creation date: {@code &quot;Dec 31, 2099 23:59:59&quot;}
+     */
+<span class="fc" id="L102">    private final LocalDateTime upperOrderCreationDate = LocalDateTime.of(2099,12,31,23,59,59);</span>
+
+
+    /**
+     * Private constructor as part of the &lt;i&gt;Singleton&lt;/i&gt; pattern.
+     */
+<span class="fc" id="L108">    private DataFactory() { }</span>
+
+    /**
+     * Static accessor method to {@link DataFactory} &lt;i&gt;Singleton&lt;/i&gt; instance.
+     * @return singleton {@link DataFactory} instance
+     */
+    public static DataFactory getInstance() {
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        return singleton==null? singleton = new DataFactory() : singleton;</span>
+    }
+
+    /**
+     * &lt;i&gt;Factory&lt;/i&gt; method to create an object of class {@link Customer}
+     * from validated parameters. The &lt;i&gt;id&lt;/i&gt; attribute is internally
+     * provided. No object is created when arguments are not valid.
+     * @param name single-String name parameter, invalid if null or empty,
+     *          example: &quot;Eric Meyer&quot; or &quot;Meyer, Eric&quot;
+     * @param contact contact parameter validated as an email address
+     *          containing '@' or a phone number, invalid if null or empty
+     * @return created {@link Customer} object with valid parameters or empty
+     */
+    public Optional&lt;Customer&gt; createCustomer(String name, String contact) {
+<span class="fc" id="L129">        var nameParts = validateSplitName(name);</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        if(nameParts.isPresent()) {</span>
+<span class="fc" id="L131">            long id = customerIdPool.next();</span>
+<span class="fc" id="L132">            var validContact = validateContact(contact);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            if(validContact.isPresent()) {</span>
+                // only create Customer when all conditions are met
+<span class="fc" id="L135">                Customer c = new Customer(id, nameParts.get().first(), nameParts.get().last());</span>
+<span class="fc" id="L136">                c.addContact(validContact.get());</span>
+<span class="fc" id="L137">                return Optional.of(c);</span>
+            }
+        }
+<span class="fc" id="L140">        return Optional.empty();</span>
+    }
+
+    /**
+     * &lt;i&gt;Factory&lt;/i&gt; method to create an object of class {@link Article}
+     * from validated arguments. The &lt;i&gt;id&lt;/i&gt; attribute is internally
+     * provided. No object is created when arguments are not valid.
+     * @param description brief article description, e.g. &quot;Tasse&quot;
+     * @param unitPrice price of one unit (in cent)
+     * @param pricingCategory pricing table associated with this article
+     * @param taxRate rate according to {@link TAXRate} ({@code TAXRate.Regular} is default)
+     * @return {@link Article} object created from valid arguments or empty
+     */
+    public Optional&lt;Article&gt; createArticle(
+        String description,
+        long unitPrice,
+        PricingCategory pricingCategory,
+        TAXRate... taxRate
+    ) {
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        TAXRate tax_rate = taxRate.length &gt; 0? taxRate[0] : TAXRate.Regular;</span>
+<span class="fc bfc" id="L160" title="All 4 branches covered.">        boolean valid = description != null &amp;&amp; description.length() &gt; 0;</span>
+<span class="fc bfc" id="L161" title="All 6 branches covered.">        valid = valid &amp;&amp; pricingCategory != null &amp;&amp; tax_rate != null;</span>
+<span class="fc bfc" id="L162" title="All 4 branches covered.">        valid = valid &amp;&amp; unitPrice &gt;= 0L;</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">        if(valid) {</span>
+<span class="fc" id="L164">            String id = articleIdPool.next();</span>
+<span class="fc" id="L165">            Article article = new Article(id, description);</span>
+<span class="fc" id="L166">            var pricing = pricingCategory.pricing();</span>
+<span class="fc" id="L167">            pricing.put(article, unitPrice, tax_rate);</span>
+<span class="fc" id="L168">            return Optional.of(article);</span>
+        }
+<span class="fc" id="L170">        return Optional.empty();</span>
+    }
+
+    /**
+     * Create {@link OrderBuilder} object used to build {@link Order} objects.
+     * @param pricingCategory pricing category used to build order
+     * @param customerFetcher function to fetch {@link Customer} object from spec-String matching customer id, first or last name.
+     * @param articleFetcher function to fetch {@link Article} object from spec-String matching article id or description.
+     * @return {@link OrderBuilder} object used to build {@link Order} objects
+     * @throws IllegalArgumentException thrown by {@link OrderBuilder} constructor if arguments are null
+     */
+    public OrderBuilder createOrderBuilder(
+        PricingCategory pricingCategory,
+        Function&lt;String, Optional&lt;Customer&gt;&gt; customerFetcher,
+        Function&lt;String, Optional&lt;Article&gt;&gt; articleFetcher
+    ) {
+<span class="fc" id="L186">        return new OrderBuilder(this, pricingCategory, customerFetcher, articleFetcher);</span>
+    }
+
+    /**
+     * Non-public &lt;i&gt;Factory&lt;/i&gt; method to create an object of class {@link Order}
+     * from validated arguments. The &lt;i&gt;id&lt;/i&gt; attribute is internally
+     * provided. No object is created when arguments are not valid.
+     * Method is used by {@link OrderBuilder} and no longer publicly exposed.
+     * @param category pricing category that applies to {@link Order}
+     * @param customer owner of the order (foreign-key relaion)
+     * @return {@link Order} object created from valid arguments or empty
+     */
+    Optional&lt;Order&gt; createOrder(PricingCategory category, Optional&lt;Customer&gt; customer) {
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">        if(category==null)</span>
+<span class="nc" id="L200">            throw new IllegalArgumentException(&quot;argument category: null&quot;);</span>
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">        if(customer==null)</span>
+<span class="nc" id="L202">            throw new IllegalArgumentException(&quot;argument customer: null&quot;);</span>
+        //
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">        if(customer.isPresent()) {</span>
+<span class="fc" id="L205">            LocalDateTime created = LocalDateTime.now();</span>
+<span class="fc" id="L206">            var order = new Order(orderIdPool.next(), customer.get(), category.pricing(), created);</span>
+<span class="fc" id="L207">            return Optional.of(order);</span>
+        } else {
+<span class="nc" id="L209">            return Optional.empty();</span>
+        }
+    }
+
+    /**
+     * Internal class to manage pool of unique {@code ids} of type {@code T}.
+     * param T generic type of id
+      * @param &lt;T&gt; The type of {@code ids} maintained in the pool.
+      */
+    private class IdPool&lt;T&gt; {
+
+        /** supplier for id's of type {@code T} */
+        private final Supplier&lt;T&gt; supplier;
+
+        /** pool of used or available id */
+        private final List&lt;T&gt; pool;
+
+        /** [0..i-1]: used id, [i..cap-1]: available id */
+        private int i=0;
+
+        /** pool capacity */
+        private int capacity;
+
+        /**
+         * Constructor of id pool of {@code T}.
+         * @param supplier external supplier of id to fill the pool
+         * @param initialIds id to initialize the pool
+         */
+        IdPool(Supplier&lt;T&gt; supplier, List&lt;T&gt; initialIds) {
+            this.supplier = supplier;
+            this.pool = new ArrayList&lt;&gt;(Optional.ofNullable(initialIds).orElse(List.of()));
+            this.capacity = this.pool.size();
+        }
+
+        /**
+         * Return next id from the pool, resupply pool if capacity is exceeded.
+         * @return next id of type {@code T}
+         */
+        T next() {
+            if(i &gt;= capacity) {  // add 10 supplied ids to the pool
+                capacity += Stream.generate(supplier)
+                        .filter(n -&gt; ! pool.contains(n))
+                        .limit(10)
+                        .peek(n -&gt; pool.add(n))
+                        .count();
+            }
+            return pool.get(i++);
+        }
+    }
+
+    /**
+     * Validate order creation date against bounds {@link lowerOrderCreationDate}
+     * ({@code &quot;Jan 01, 2020 00:00&quot;}) and {@link upperOrderCreationDate}
+     * ({@code &quot;Dec 31, 2099 23:59&quot;}).
+     * @param date date to validate
+     * @return validated date or empty result
+     */
+    public Optional&lt;LocalDateTime&gt; validateOrderCreationDate(LocalDateTime date) {
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">        if(date != null) {</span>
+<span class="pc bpc" id="L268" title="2 of 4 branches missed.">            boolean valid = date.isAfter(lowerOrderCreationDate) &amp;&amp; date.isBefore(upperOrderCreationDate);</span>
+            // second test to match bounds is only performed when first test was invalid
+<span class="pc bpc" id="L270" title="5 of 6 branches missed.">            valid = valid || date.isEqual(lowerOrderCreationDate) || date.isEqual(upperOrderCreationDate);</span>
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">            if(valid) {</span>
+<span class="fc" id="L272">                return Optional.of(date);</span>
+            }
+        }
+<span class="nc" id="L275">        return Optional.empty();</span>
+    }
+
+    /**
+     * Validate contact for acceptable email address or phone number and
+     * return contact or empty result.
+     * &lt;br&gt;
+     * Rules for validating a &lt;i&gt;email&lt;/i&gt; addresses and &lt;i&gt;phone&lt;/i&gt;
+     * numbers are defined by regular expressions:
+     * &lt;ul&gt;
+     * &lt;li&gt; &lt;i&gt;email address:&lt;/i&gt; {@code &quot;^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z0-9_]+$&quot;}.
+     * &lt;li&gt; &lt;i&gt;phone number:&lt;/i&gt; {@code &quot;^(phone:|fax:|\\+[0-9]+){0,1}\\s*[\\s0-9()][\\s0-9()-]*&quot;}.
+     * &lt;li&gt; leading and trailing white spaces {@code [\s]}, commata {@code [,;]}
+     *      and quotes {@code [&quot;']} are trimmed from contacts before validation.
+     * &lt;/ul&gt;
+     * @param contact contact to validate
+     * @return possibly modified (e.g. dequoted, trimmed) valid contact or empty result
+     */
+    public Optional&lt;String&gt; validateContact(String contact) {
+<span class="fc bfc" id="L294" title="All 2 branches covered.">        if(contact != null) {</span>
+<span class="fc" id="L295">            var cont = trimQuotesAndWhiteSpaces(contact);</span>
+<span class="fc" id="L296">            final int minLength = 6;</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">            boolean valid = cont.length() &gt;= minLength;</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">            if(valid &amp;&amp; (</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">                emailRegex.matcher(cont).matches() ||</span>
+<span class="fc bfc" id="L300" title="All 2 branches covered.">                phoneRegex.matcher(cont).matches()</span>
+            )) {
+<span class="fc" id="L302">                return Optional.of(cont);</span>
+            }
+        }
+<span class="fc" id="L305">        return Optional.empty();</span>
+    }
+
+    /**
+     * Validate name and return name or empty result. A valid name must
+     * start with a letter, followed by a combination of letters, &quot;-&quot;,
+     * &quot;.&quot; or white spaces. Valid names are: &quot;E&quot;, &quot;E.&quot;, &quot;Eric&quot;,
+     * &quot;Ulla-Nadine&quot;, &quot;Eric Meyer&quot;, &quot;von-Blumenfeld&quot;.
+     * Names do not include numbers or other special characters.
+     * &lt;br&gt;
+     * Rules for validating a &lt;i&gt;name&lt;/i&gt; are defined by a regular expression:
+     * &lt;ul&gt;
+     * &lt;li&gt; {@code &quot;^[A-Za-z][A-Za-z-\\s.]*$&quot;}.
+     * &lt;li&gt; leading and trailing white spaces {@code [\s]}, commata {@code [,;]} and
+     *      quotes {@code [&quot;']} are trimmed from names before validation, e.g.
+     *      {@code &quot;  'Schulz-Müller, Tim Anton'  &quot;}.
+     * &lt;/ul&gt;
+     * &lt;pre&gt;
+     * Examples:
+     * +------------------------------------+---------------------------------------+
+     * |name to validate                    |valid, possibly modified name          |
+     * +------------------------------------+---------------------------------------+
+     * |&quot;Eric&quot;                              |&quot;Eric&quot;                                 |
+     * |&quot;Ulla-Nadine&quot;                       |&quot;Ulla-Nadine&quot;                          |
+     * |&quot;E&quot;, &quot;E.&quot;, &quot;von-A&quot;                  |&quot;E&quot;, &quot;E.&quot;, &quot;von-A&quot;                     |
+     * +------------------------------------+---------------------------------------+
+     *
+     * Trim leading, trailing white spaces and quotes:
+     * +------------------------------------+---------------------------------------+
+     * |&quot;  Anne  &quot;   (lead/trailing spaces) |&quot;Anne&quot;                                 |
+     * |&quot;  'Meyer'  &quot;   (quotes)            |&quot;Meyer&quot;                                |
+     * +------------------------------------+---------------------------------------+
+     * &lt;/pre&gt;
+     * @param name name to validate
+     * @param acceptEmptyName accept empty (&quot;&quot;) name, e.g. as first name
+     * @return valid, possibly modified (e.g. dequoted, trimmed) name or empty result
+     */
+    public Optional&lt;String&gt; validateName(String name, boolean acceptEmptyName) {
+<span class="pc bpc" id="L343" title="1 of 2 branches missed.">        if(name != null) {</span>
+<span class="fc" id="L344">            name = trimQuotesAndWhiteSpaces(name);</span>
+<span class="pc bpc" id="L345" title="1 of 6 branches missed.">            if(nameRegex.matcher(name).matches() || (name.length()==0 &amp;&amp; acceptEmptyName))</span>
+<span class="fc" id="L346">                return Optional.of(name);</span>
+        }
+<span class="fc" id="L348">        return Optional.empty();</span>
+    }
+
+    /**
+     * Record of first and last name parts of a name.
+     * @param first first name parts
+     * @param last last name parts
+     * @hidden exclude from documentation
+     */
+    public record NameParts(String first, String last) { }
+
+    /**
+     * Split single-String name into first and last name parts and
+     * validate parts, e.g. &quot;Meyer, Eric&quot; is split into first: &quot;Eric&quot;
+     * and last name: &quot;Meyer&quot;.
+     * &lt;br&gt;
+     * Rules of splitting a single-String name into last- and first name parts:
+     * &lt;ul&gt;
+     * &lt;li&gt; if a name contains no seperators (comma or semicolon {@code [,;]}), the trailing
+     *      consecutive part is the last name, all prior parts are first name parts, e.g.
+     *      {@code &quot;Tim Anton Schulz-Müller&quot;}, splits into &lt;i&gt;first name:&lt;/i&gt;
+     *      {@code &quot;Tim Anton&quot;} and &lt;i&gt;last name:&lt;/i&gt; {@code &quot;Schulz-Müller&quot;}.
+     * &lt;li&gt; names with seperators (comma or semicolon {@code [,;]}) split into a last name
+     *      part before the seperator and a first name part after the seperator, e.g.
+     *      {@code &quot;Schulz-Müller, Tim Anton&quot;} splits into &lt;i&gt;first name:&lt;/i&gt;
+     *      {@code &quot;Tim Anton&quot;} and &lt;i&gt;last name:&lt;/i&gt; {@code &quot;Schulz-Müller&quot;}.
+     * &lt;li&gt; leading and trailing white spaces {@code [\s]}, commata {@code [,;]} and quotes
+     *      {@code [&quot;']} are trimmed from names before validation, e.g.
+     *      {@code &quot;  'Schulz-Müller, Tim Anton'  &quot;}.
+     * &lt;li&gt; interim white spaces between name parts are removed, e.g.
+     *      {@code &quot;Schulz-Müller, &lt;white-spaces&gt; Tim &lt;white-spaces&gt; Anton &lt;white-spaces&gt; &quot;}.
+     * &lt;/ul&gt;
+     * &lt;pre&gt;
+     * Examples:
+     * +------------------------------------+-------------------+-------------------+
+     * |Single-String name                  |first name parts   |last name parts    |
+     * +------------------------------------+-------------------+-------------------+
+     * |&quot;Eric Meyer&quot;                        |&quot;Eric&quot;             |&quot;Meyer&quot;            |
+     * |&quot;Meyer, Anne&quot;                       |&quot;Anne&quot;             |&quot;Meyer&quot;            |
+     * |&quot;Meyer; Anne&quot;                       |&quot;Anne&quot;             |&quot;Meyer&quot;            |
+     * |&quot;Tim Schulz‐Mueller&quot;                |&quot;Tim&quot;              |&quot;Schulz‐Mueller&quot;   |
+     * |&quot;Nadine Ulla Blumenfeld&quot;            |&quot;Nadine Ulla&quot;      |&quot;Blumenfeld&quot;       |
+     * |&quot;Nadine‐Ulla Blumenfeld&quot;            |&quot;Nadine‐Ulla&quot;      |&quot;Blumenfeld&quot;       |
+     * |&quot;Khaled Mohamed Abdelalim&quot;          |&quot;Khaled Mohamed&quot;   |&quot;Abdelalim&quot;        |
+     * +------------------------------------+-------------------+-------------------+
+     *
+     * Trim leading, trailing and interim white spaces and quotes:
+     * +------------------------------------+-------------------+-------------------+
+     * |&quot; 'Eric Meyer'  &quot;                   |&quot;Eric&quot;             |&quot;Meyer&quot;            |
+     * |&quot;Nadine     Ulla     Blumenfeld&quot;    |&quot;Nadine Ulla&quot;      |&quot;Blumenfeld&quot;       |
+     * +------------------------------------+-------------------+-------------------+
+     * &lt;/pre&gt;
+     * @param name single-String name to split into first- and last name parts
+     * @return record with valid, possibly modified (e.g. dequoted, trimmed) first and last name parts or empty result
+     */
+    public Optional&lt;NameParts&gt; validateSplitName(String name) {
+<span class="fc bfc" id="L404" title="All 4 branches covered.">        if(name != null &amp;&amp; name.length() &gt; 0) {</span>
+<span class="fc" id="L405">            String first=&quot;&quot;, last=&quot;&quot;;</span>
+<span class="fc" id="L406">            String[] spl1 = name.split(&quot;[,;]&quot;);</span>
+<span class="fc bfc" id="L407" title="All 2 branches covered.">            if(spl1.length &gt; 1) {</span>
+                // two-part name with last name first
+<span class="fc" id="L409">                last = spl1[0];</span>
+<span class="fc" id="L410">                first = spl1[1];</span>
+<span class="fc" id="L411">            } else {</span>
+                // no separator [,;] -&gt; split by white spaces;
+<span class="fc bfc" id="L413" title="All 2 branches covered.">                for(String s : name.split(&quot;\\s+&quot;)) {</span>
+<span class="fc bfc" id="L414" title="All 2 branches covered.">                    if(last.length() &gt; 0) {</span>
+                        // collect firstNames in order and lastName as last
+<span class="fc bfc" id="L416" title="All 2 branches covered.">                        first += (first.length()==0? &quot;&quot; : &quot; &quot;) + last;</span>
+                    }
+<span class="fc" id="L418">                    last = s;</span>
+                }
+            }
+<span class="fc" id="L421">            var lastName = validateName(last, false);</span>
+<span class="fc bfc" id="L422" title="All 2 branches covered.">            if(lastName.isPresent()) {</span>
+<span class="fc" id="L423">                var firstName = validateName(first, true);</span>
+<span class="pc bpc" id="L424" title="1 of 2 branches missed.">                if(firstName.isPresent()) {</span>
+<span class="fc" id="L425">                    return Optional.of(new NameParts(firstName.get(), lastName.get()));</span>
+                }
+            }
+        }
+<span class="fc" id="L429">        return Optional.empty();</span>
+    }
+
+    /**
+     * Trim leading and trailing white spaces, commata {@code [,;]} and
+     * quotes {@code [&quot;']} from a String.
+     * @param s String to trim
+     * @return trimmed String
+     */
+    private String trimQuotesAndWhiteSpaces(String s) {
+<span class="fc" id="L439">        s = s.replaceAll(&quot;^[\\s\&quot;',;]*&quot;, &quot;&quot;);   // trim leading white spaces[\s], commata[,;] and quotes['&quot;]</span>
+<span class="fc" id="L440">        s = s.replaceAll( &quot;[\\s\&quot;',;]*$&quot;, &quot;&quot;);  // trim trailing white spaces[\s], commata[,;] and quotes['&quot;]</span>
+<span class="fc" id="L441">        s = s.replaceAll( &quot;[\\s]+&quot;, &quot; &quot;);       // remove white spaces sequences, &quot;Eric  Meyer&quot; -&gt; &quot;Eric Meyer&quot;</span>
+<span class="fc" id="L442">        return s;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

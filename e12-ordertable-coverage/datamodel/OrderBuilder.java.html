@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCo Coverage Report</a> &gt; <a href="index.source.html" class="el_package">datamodel</a> &gt; <span class="el_source">OrderBuilder.java</span></div><h1>OrderBuilder.java</h1><pre class="source lang-java linenums">package datamodel;
+
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
+import datamodel.Order.OrderItem;
+import datamodel.Pricing.PricingCategory;
+
+
+/**
+ * Class to build {@link Order} objects as a multi-step process.
+ */
+@Accessors(fluent=true)
+@AllArgsConstructor(access=AccessLevel.PROTECTED)
+public final class OrderBuilder {
+
+    /**
+     * Reference to the {@link DataFactory} singleton.
+     */
+    private final DataFactory dataFactory;
+
+    /**
+     * {@link Pricing.PricingCategory} used by {@link OrderBuilder} instance.
+     */
+    @Getter
+    private final PricingCategory pricingCategory;
+
+    /**
+     * Function to fetch {@link Customer} object from spec-String matching
+     * customer id, first or last name.
+     */
+    private final Function&lt;String, Optional&lt;Customer&gt;&gt; customerFetcher;
+
+    /**
+     * Function to fetch {@link Article} object from spec-String matching
+     * article id or description.
+     */
+    private final Function&lt;String, Optional&lt;Article&gt;&gt; articleFetcher;
+
+
+    /**
+     * Inner class to hold interim state of an partially built {@link Order}
+     * object. BuildState is passed during build steps.
+     */
+    @AllArgsConstructor(access=AccessLevel.PRIVATE)
+    public final class BuildState {
+
+        /**
+         * Current build step.
+         */
+        private int step = 0;
+
+        /**
+         * Customer looked up from {@link customers} collection.
+         */
+        private Optional&lt;Customer&gt; customer;
+
+        /**
+         * Partially built order.
+         */
+        private Optional&lt;Order&gt; order;
+
+
+        /**
+         * Create and add {@link OrderItem} to order as part of the final build step.
+         * @param unitsOrdered units of an article ordered
+         * @param articleSpec specification of an article to look up by articleFetcher
+         * @return chainable self-reference
+         */
+        public BuildState item(long unitsOrdered, String articleSpec) {
+            var article = articleFetcher.apply(articleSpec);
+            if(article.isPresent() &amp;&amp; unitsOrdered &gt; 0) {
+                order.get().addItem(article.get(), unitsOrdered);
+            }
+            return this;
+        }
+
+        /**
+         * Build step 1: fetch customer object from a customer specification (matching if, first or last name).
+         * @param customerFetcher supplier of customer object from customer specification (by matching id or name)
+         */
+        private void step1_fetchCustomer(String customerSpec) {
+            if(step==0) {
+                customer = customerFetcher.apply(customerSpec);
+                stepOnCondition(1, customer.isPresent());
+            }
+        }
+
+        /**
+         * Build step 2: create order object.
+         */
+        private void step2_createOrder() {
+            if(step==1) {
+                order = dataFactory.createOrder(pricingCategory, customer);
+                stepOnCondition(2, order.isPresent());
+            }
+        }
+
+        /**
+         * Build step 3: add ordered items.
+         * @param buildState passed to add {@link OrderItem} objects to order
+         */
+        private void step3_supplyItems(Consumer&lt;BuildState&gt; buildState) {
+            if(step==2) {
+                buildState.accept(this);
+                stepOnCondition(3, order.get().itemsCount() &gt; 0);
+            }
+        }
+
+        /**
+         * Internal helper method to step build counter if condition is met.
+         * @param to next value of step counter
+         * @param condition condition that must be met to step counter
+         */
+        private void stepOnCondition(int to, boolean condition) {
+            step = condition? to : step;
+        }
+    }
+
+    /**
+     * Method to build {@link Order} object.
+     * @param customerSpec specification matching customer id, first or last name
+     * @param buildState call-out to add {@link OrderItem} to order
+     * @return fully built {@link Order} object or empty Optional
+     */
+    public Optional&lt;Order&gt; buildOrder(String customerSpec, Consumer&lt;BuildState&gt; buildState) {
+<span class="fc" id="L133">        var bst = new BuildState(0, Optional.empty(), Optional.empty());</span>
+        // 
+<span class="fc" id="L135">        bst.step1_fetchCustomer(customerSpec);</span>
+<span class="fc" id="L136">        bst.step2_createOrder();</span>
+<span class="fc" id="L137">        bst.step3_supplyItems(buildState);</span>
+        // 
+<span class="fc" id="L139">        return bst.order;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

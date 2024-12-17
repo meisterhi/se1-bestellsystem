@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Order.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCo Coverage Report</a> &gt; <a href="index.source.html" class="el_package">datamodel</a> &gt; <span class="el_source">Order.java</span></div><h1>Order.java</h1><pre class="source lang-java linenums">package datamodel;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.StreamSupport;
+
+
+/**
+ * Immutable entity class representing an &lt;i&gt;Order&lt;/i&gt;, which is a
+ * collection of {@link Article} items purchased by a {@link Customer}.
+ * &lt;br&gt;
+ * An &lt;i&gt;immutable&lt;/i&gt; class does not allow changes to attributes.
+ * {@link DataFactory} is the only class that creates {@link Order}
+ * objects from validated arguments.
+ * 
+ * @version &lt;code style=color:green&gt;{@value application.package_info#Version}&lt;/code&gt;
+ * @author &lt;code style=color:blue&gt;{@value application.package_info#Author}&lt;/code&gt;
+ */
+public final class Order {
+
+    /**
+     * Record of an order line item comprised of a number of units order
+     * of one {@link Article}.
+     * @param article ordered article
+     * @param unitsOrdered ordered number of units
+     */
+    public final record OrderItem (
+        Article article,
+        long unitsOrdered
+    ) {
+        /**
+         * @hidden
+         */
+        @Override public int hashCode() { return 0; }
+    }
+
+    /**
+     * Unique Order id attribute. Must be {@code &gt; 0}).
+     */
+    private final long id;
+
+    /**
+     * Reference to {@link Customer} owning the order. Must not be {@code null}.
+     */
+    private final Customer customer;
+
+    /**
+     * Reference to price {@link OrderItem} objects (country, currency, tax rates).
+     * Must not be {@code null}.
+     */
+    private final Pricing pricing;
+
+    /**
+     * Day and time (in UTC) when order was created. Must not be {@code null} and
+     * between dates: {@code &quot;Jan 01, 2020 00:00&quot;} and {@code &quot;Dec 31, 2099 23:59&quot;}
+     */
+    private final LocalDateTime created;
+
+    /**
+     * List of {@link OrderItem} objects that constitute this order.
+     */
+<span class="fc" id="L63">    private final List&lt;OrderItem&gt; orderItems = new ArrayList&lt;&gt;();</span>
+
+
+    /**
+     * None-public constructor used by {@link DataFactory} avoiding object
+     * creation outside the package.
+     * @param id order identifier supplied by {@link DataFactory}
+     * @param customer reference to owning customer (must not be {@code null})
+     * @param pricing reference to pricing (country, currency, tax rates) that applies to order (must not be {@code null})
+     * @param created day and time (in UTC) when order was created (must not be {@code null})
+     * @throws IllegalArgumentException if {@code id} is negative,
+     * arguments are {@code null} or creation date is outside bounds
+     * between {@code &quot;Jan 01, 2020 00:00&quot;} and {@code &quot;Dec 31, 2099 23:59&quot;}
+     */
+<span class="fc" id="L77">    protected Order(long id, Customer customer, Pricing pricing, LocalDateTime created) {</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if(id &lt; 0L)</span>
+<span class="nc" id="L79">            throw new IllegalArgumentException(&quot;id negative&quot;);</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if(pricing==null)</span>
+<span class="nc" id="L81">            throw new IllegalArgumentException(&quot;pricing null&quot;);</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if(created==null)</span>
+<span class="nc" id="L83">            throw new IllegalArgumentException(&quot;created null&quot;);</span>
+        //
+<span class="fc" id="L85">        var validCreationDate = DataFactory.getInstance().validateOrderCreationDate(created);</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if(validCreationDate.isEmpty())</span>
+<span class="nc" id="L87">            throw new IllegalArgumentException(&quot;creation date outside valid range&quot;);</span>
+        //
+<span class="fc" id="L89">        this.id = id;</span>
+<span class="fc" id="L90">        this.customer = customer;</span>
+<span class="fc" id="L91">        this.pricing = pricing;</span>
+<span class="fc" id="L92">        this.created = validCreationDate.get();</span>
+<span class="fc" id="L93">    }</span>
+
+    /**
+     * Id attribute getter.
+     * @return order id (always {@code &gt; 0})
+     */
+    public long getId() {
+<span class="nc" id="L100">        return id;</span>
+    }
+
+    /**
+     * Owning customer getter.
+     * @return customer owning this order (never {@code null}).
+     */
+    public Customer getCustomer() {
+<span class="nc" id="L108">        return customer;</span>
+    }
+
+    /**
+     * Return pricing information that applies to this order.
+     * @return reference to pricing information (never {@code null})
+     */
+    public Pricing getPricing() {
+<span class="fc" id="L116">        return pricing;</span>
+    }
+
+    /**
+     * Return day and time (in UTC) when order was created.
+     * @return day and time (in UTC) when order was created (never {@code null} and
+     * between dates: {@code &quot;Jan 01, 2020 00:00&quot;} and {@code &quot;Dec 31, 2099 23:59&quot;})
+     */
+    public LocalDateTime getCreated() {
+<span class="nc" id="L125">        return created;</span>
+    }
+
+    /**
+     * Return number of items included in this order.
+     * @return number of items included in this order
+     */
+    public long itemsCount() {
+<span class="fc" id="L133">        return orderItems.size();</span>
+    }
+
+    /**
+     * Return items included in this order.
+     * @return items included in this order (as immutable {@link Iterable&lt;String&gt;})
+     */
+    public Iterable&lt;OrderItem&gt; getOrderItems() {
+<span class="fc" id="L141">        return orderItems;</span>
+    }
+
+    /**
+     * Create and add new item to this order from valid arguments.
+     * @param article article to order
+     * @param unitsOrdered number of articles to order
+     * @return chainable self-reference
+     * @throws IllegalArgumentException when article argument is null
+     */
+    public Order addItem(Article article, long unitsOrdered) {
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">        if(article==null)</span>
+<span class="nc" id="L153">            throw new IllegalArgumentException(&quot;argument article null&quot;);</span>
+        //
+<span class="fc" id="L155">        var item = new OrderItem(article, unitsOrdered);</span>
+<span class="fc" id="L156">        orderItems.add(item);</span>
+<span class="fc" id="L157">        return this;</span>
+    }
+
+    /**
+     * Delete the i-th line item from order with {@code i &gt;= 0} and {@code i &lt; itemsCount()}.
+     * Method has no effect when {@code i} is outside valid bounds.
+     * @param i index of line item to delete from order
+     */
+    public void deleteItem(int i) {
+<span class="nc bnc" id="L166" title="All 4 branches missed.">        if(i &gt;= 0 &amp;&amp; i &lt; itemsCount()) {</span>
+<span class="nc" id="L167">            orderItems.remove(i);</span>
+        }
+<span class="nc" id="L169">    }</span>
+
+    /**
+     * Bulk delete of line items provided by a collection of indices.
+     * Only line items with {@code i &gt;= 0} and {@code i &lt; itemsCount()}
+     * are deleted. Method has no effect for {@code i} outside valid bounds.
+     * @param indices collection of indices of line items to delete from order
+     */
+    public void deleteItems(Iterable&lt;Integer&gt; indices) {
+<span class="nc" id="L178">        var size = orderItems.size();</span>
+<span class="nc" id="L179">        var items = StreamSupport.stream(indices.spliterator(), false)</span>
+<span class="nc bnc" id="L180" title="All 4 branches missed.">            .filter(i -&gt; i &gt;= 0 &amp;&amp; i &lt; size)</span>
+<span class="nc" id="L181">            .map(i -&gt; orderItems.get(i))</span>
+<span class="nc" id="L182">            .toList();</span>
+        //
+        // remove items as one transaction from list
+<span class="nc" id="L185">        orderItems.removeAll(items);</span>
+<span class="nc" id="L186">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

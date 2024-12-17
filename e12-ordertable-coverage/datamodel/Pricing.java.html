@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Pricing.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCo Coverage Report</a> &gt; <a href="index.source.html" class="el_package">datamodel</a> &gt; <span class="el_source">Pricing.java</span></div><h1>Pricing.java</h1><pre class="source lang-java linenums">package datamodel;
+
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
+
+/**
+ * Immutable class to store pricing information organized by {@link PricingCategory}
+ * instances such as:
+ * &lt;pre&gt;
+ * - &lt;i&gt;BasePricing(Country.Germany)&lt;/i&gt;,
+ * - &lt;i&gt;BlackFridayPricing(Country.Germany)&lt;/i&gt; (discounts),
+ * - &lt;i&gt;SwissPricing(Country.Switzerland)&lt;/i&gt;,
+ * - &lt;i&gt;UKPricing(Country.UnitedKingdom)&lt;/i&gt;.
+ * &lt;/pre&gt;
+ * 
+ * Pricing includes a {@link TAXRate} applicable to each {@link Article}
+ * and a {@link Currency} that is associated with a {@link Country} and
+ * in which an {@link Article} is priced.
+ * 
+ * Value-added {@link TAXRate} (VAT) categories used in different countries
+ * are:
+ * &lt;pre&gt;
+ * - https://de.wikipedia.org/wiki/Umsatzsteuer_(Deutschland)
+ * - https://de.wikipedia.org/wiki/Mehrwertsteuer_(Schweiz)
+ * - https://www.gov.uk/vat-rates
+ * &lt;/pre&gt;
+ * 
+ * @version &lt;code style=color:green&gt;{@value application.package_info#Version}&lt;/code&gt;
+ * @author &lt;code style=color:blue&gt;{@value application.package_info#Author}&lt;/code&gt;
+ */
+@Accessors(fluent=true)
+@Getter
+public class Pricing {
+
+    /**
+     * Enum of pricing categories
+     */
+    @Getter
+    public enum PricingCategory {
+        /** regular prices in Germany */        BasePricing(Country.Germany)
+        // @REMOVE
+        ,/** Black Friday prices in Germany */  BlackFridayPricing(Country.Germany),
+        /** Pricing in Switzerland */           SwissPricing(Country.Switzerland),
+        /** Pricing in the United Kingdom */    UKPricing(Country.UnitedKingdom)
+        // @/REMOVE
+        ;
+        private final Country country;
+        private final Pricing pricing;
+
+        PricingCategory(Country country) {
+            this.country = country;
+            this.pricing = new Pricing(country);
+        }
+    }
+
+    /**
+     * Enum of TAXRates for {@link Article} instances.
+     */
+    public enum TAXRate {
+        /** German regular rate 19% */  Regular,
+        /** German reduced rate  7% */  Reduced,
+        /** Swiss 3rd special rate  */  Special,
+        /** Tax-free rate        0% */  Excempt
+        ;
+
+        /**
+         * Parse Enum value from a String.
+         * @param s String to parse
+         * @return TAXRate parsed from String
+         * @throws ParseException thrown when TAXRate could not be parsed
+         */
+        public static TAXRate parse(String s) throws ParseException {
+            switch(s) {
+                case &quot;regular&quot;: return TAXRate.Regular;
+                case &quot;reduced&quot;: return TAXRate.Reduced;
+                case &quot;special&quot;: return TAXRate.Special;
+                default:        return TAXRate.Excempt;
+            }
+        }
+    }
+
+    /**
+     * Enum or countries with currencies used.
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum Country {
+        /** Germany */          Germany(Currency.Euro)
+        // @REMOVE
+        ,/** Switzerland */     Switzerland(Currency.SwissFranc),
+        /** United Kingdom */   UnitedKingdom(Currency.UKPound)
+        // @/REMOVE
+        ;
+        private final Currency currency;
+    }
+
+    /**
+     * Enum of currency with three-letter code and Unicode symbol.
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum Currency {
+        /** Euro */             Euro(&quot;EUR&quot;, &quot;\u20AC&quot;)
+        // @REMOVE
+        ,/** Swiss Franc */     SwissFranc(&quot;CHF&quot;, &quot;\u20A3&quot;),
+        /** British Pound */    UKPound(&quot;GBP&quot;, &quot;\u00A3&quot;)
+        // @/REMOVE
+        ;
+        private final String code;
+        private final String unicode;
+    }
+
+    /**
+     * Record stored in {@link articlePriceMap} for an article.
+     */
+    private record PriceRecord(long unitPrice, TAXRate taxRate) { }
+
+    /**
+     * Map of articles with associated {@link PriceRecord}
+     * (not exposed as getter).
+     */
+<span class="fc" id="L130">    @Getter(AccessLevel.NONE)</span>
+    private final Map&lt;Article, PriceRecord&gt; articlePriceMap = new HashMap&lt;&gt;();
+
+    /**
+     * Country of this {@link Pricing} instance.
+     */
+    private final Country country;
+
+    /**
+     * Currency associated with this {@link Pricing} instance.
+     */
+    private final Currency currency;
+
+
+    /**
+     * Private constructor.
+     * @param country {@link Country} associated with this instance
+     */
+<span class="fc" id="L148">    private Pricing(Country country) {</span>
+<span class="fc" id="L149">        this.country = country;</span>
+<span class="fc" id="L150">        this.currency = country.currency();</span>
+<span class="fc" id="L151">    }</span>
+
+    /**
+     * Store or update {@link Article} with new {@link PriceRecord} in
+     * article price map.
+     * @param article article to store or update in article price map
+     * @param unitPrice price associated with one unit of the {@link Article}
+     * @param taxRate tax rate applicable to {@link Article}
+     * @return chainable self-reference
+     */
+    public Pricing put(Article article, long unitPrice, TAXRate taxRate) {
+<span class="fc" id="L162">        var priceRecord = new PriceRecord(unitPrice, taxRate);</span>
+<span class="fc" id="L163">        articlePriceMap.put(article, priceRecord);</span>
+
+        // @REMOVE
+<span class="fc" id="L166">        java.util.Arrays.stream(PricingCategory.values()).forEach(category -&gt; {</span>
+<span class="fc" id="L167">            long adjUnitPrice = unitPrice;</span>
+<span class="fc bfc" id="L168" title="All 4 branches covered.">            switch(category) {</span>
+<span class="fc" id="L169">            case BlackFridayPricing: adjUnitPrice = adjustPrice(unitPrice, 0.80); break;</span>
+<span class="fc" id="L170">            case SwissPricing: adjUnitPrice = adjustPrice(unitPrice, 1.80); break;</span>
+<span class="fc" id="L171">            case UKPricing: adjUnitPrice = adjustPrice(unitPrice, 1.15); break;</span>
+            default: break;
+            }
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">            var taxrate = (taxRate==null)? TAXRate.Regular : taxRate;</span>
+<span class="fc" id="L175">            category</span>
+<span class="fc" id="L176">                .pricing()</span>
+<span class="fc" id="L177">                .articlePriceMap.put(article, new PriceRecord(adjUnitPrice, taxrate));</span>
+<span class="fc" id="L178">        });</span>
+        // @/REMOVE
+<span class="fc" id="L180">        return this;</span>
+    }
+
+    /**
+     * Return unit price for {@link Article}.
+     * @param article subject of unit price request
+     * @return article unit price or {@code 0} if article is not in price map
+     */
+    public long unitPrice(Article article) {
+<span class="fc" id="L189">        return Optional.ofNullable(articlePriceMap.get(article))</span>
+<span class="fc" id="L190">            .map(p -&gt; p.unitPrice).orElse(0L);</span>
+    }
+
+    /**
+     * Return {@link TAXRate} for {@link Article}.
+     * @param article subject of tax rate request
+     * @return tax rate that applies to article
+     */
+    public TAXRate taxRate(Article article) {
+<span class="fc" id="L199">        return Optional.ofNullable(articlePriceMap.get(article))</span>
+<span class="fc" id="L200">            .map(p -&gt; p.taxRate()).orElse(TAXRate.Regular);</span>
+    }
+
+    /**
+     * Return {@link TAXRate} as percent value for {@link Article}, e.g.
+     * value 19.0 for tax rate of 19%.
+     * @param article subject of tax rate request
+     * @return tax rate as percent value that applies to article
+     */
+    public double taxRateAsPercent(Article article) {
+<span class="fc" id="L210">        var taxRate = taxRate(article);</span>
+        // @REMOVE
+<span class="pc bpc" id="L212" title="2 of 4 branches missed.">        switch(country) {</span>
+        case Germany:
+        // @/REMOVE
+<span class="fc bfc" id="L215" title="All 3 branches covered.">            switch(taxRate) {</span>
+<span class="fc" id="L216">                case Regular: return 19.0;</span>
+<span class="fc" id="L217">                case Reduced: return  7.0;</span>
+<span class="fc" id="L218">                default: return 0.0;</span>
+            }
+        // @REMOVE
+        case Switzerland:
+<span class="pc bpc" id="L222" title="2 of 4 branches missed.">            switch(taxRate) {</span>
+<span class="fc" id="L223">                case Regular: return  8.1;</span>
+<span class="fc" id="L224">                case Reduced: return  2.6;</span>
+<span class="nc" id="L225">                case Special: return  3.8;</span>
+<span class="nc" id="L226">                default: return 0.0;</span>
+            }
+        case UnitedKingdom:
+<span class="nc bnc" id="L229" title="All 3 branches missed.">            switch(taxRate) {</span>
+<span class="nc" id="L230">                case Regular: return  20.0;</span>
+<span class="nc" id="L231">                case Reduced: return   5.0;</span>
+<span class="nc" id="L232">                default: return 0.0;</span>
+            }
+        }
+<span class="nc" id="L235">        return 0.0;</span>
+        // @/REMOVE
+    }
+
+    /**
+     * Adjust price to a factor, e.g. a currency exchange rate or a discount
+     * rate. The adjustment is mapped to a trailing 5 or 9, e.g. price: 2497
+     * is mapped to: 2499.
+     * @param price price to adjust
+     * @param factor exchange or discount rate
+     * @return adjusted price
+     */
+    private long adjustPrice(long price, double factor) {
+<span class="fc" id="L248">        long newPrice = (long)(price * factor);</span>
+<span class="fc" id="L249">        long base = (newPrice / 10) * 10;</span>
+<span class="fc bfc" id="L250" title="All 4 branches covered.">        long dig = (newPrice % 10 &lt;= 5 &amp;&amp; newPrice &gt;= 20)? 5 : 9;</span>
+<span class="fc" id="L251">        return base + dig;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
