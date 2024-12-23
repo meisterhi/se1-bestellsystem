@@ -136,11 +136,11 @@ function setup() {
         created+=("JDK_JAVAC_OPTIONS")
     fi
 
-    # set JDK_JAVADOC_OPTIONS used by the javadoc compiler
+    # set JDK_JAVADOC_OPTIONS used by the javadoc compiler, -Xdoclint:-missing avoids warning: missing default constuctor
     if [ -z "$JDK_JAVADOC_OPTIONS" ]; then
         local jdoc_opts=(
             "--source-path ${P[src]} -d ${P[doc-dir]}$mp_opt "
-            "-version -author -noqualifier \"java.*:application.*:datamodel.*:system.*\""
+            "-version -author -Xdoclint:-missing -noqualifier \"java.*:application.*:datamodel.*:system.*\""
         )
         # append packages from src/main later in javadoc command: + "application"
         export JDK_JAVADOC_OPTIONS=${jdoc_opts[@]}
@@ -521,8 +521,8 @@ function coverage_report() {
             echo "--> define variable: \$analyze_classes, e.g. with:"
             echo "  analyze_classes=("
                 local cld="${P[classes]}"
-                [ -d "$cld/datamodel" ] && [ $(ls "$cld/datamodel") ] && cld+="/datamodel"
-                find "$cld" -type f | sed -e '/\$.*.class/d' -e '/info/d' \
+                # drop application package from coverage
+                find "$cld" -type f | sed -e "/\/application\//d" -e '/\$.*.class/d' -e '/info/d' \
                     -e '/application\/Runtime/d' -e 's/^.*$/    --classfiles .\/&/'
             echo "  )"
         else
