@@ -38,5 +38,6 @@
 
     // Debug properties
     "java.debug.settings.onBuildFailureProceed": true,
-    "java.debug.settings.showHex": true,
+    "java.debug.settings.showHex": false,
+    "editor.wordWrap": "off",
 }

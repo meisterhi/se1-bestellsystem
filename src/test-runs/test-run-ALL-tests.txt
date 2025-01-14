@@ -1,0 +1,123 @@
+╷
+├─ JUnit Jupiter ✔
+│  ├─ Customer_400_Contacts_Tests ✔
+│  │  ├─ test400_addContactsRegularCases() ✔
+│  │  ├─ test401_addContactsCornerCases() ✔
+│  │  ├─ test402_addContactsCornerCases() ✔
+│  │  ├─ test403_addContactsMinimumLength() ✔
+│  │  ├─ test404_addContactsIgnoreDuplicates() ✔
+│  │  ├─ test410_deleteContactRegularCases() ✔
+│  │  ├─ test411_deleteContactOutOfBoundsCases() ✔
+│  │  └─ test412_deleteAllContacts() ✔
+│  ├─ Application_0_always_pass_Tests ✔
+│  │  ├─ test_001_always_pass() ✔
+│  │  └─ test_002_always_pass() ✔
+│  ├─ Article_100_FactoryCreate_Tests ✔
+│  │  ├─ test100_RegularArticleCreation() ✔
+│  │  ├─ test101_RegularArticleCreation() ✔
+│  │  ├─ test102_RegularArticleCreation() ✔
+│  │  ├─ test110_ArticleCreationCornerCases() ✔
+│  │  ├─ test111_ArticleCreationCornerCases() ✔
+│  │  ├─ test112_ArticleCreationCornerCases() ✔
+│  │  ├─ test120_ArticleCreationExceptionCases() ✔
+│  │  ├─ test121_ArticleCreationExceptionCases() ✔
+│  │  ├─ test122_ArticleCreationExceptionCases() ✔
+│  │  ├─ test123_ArticleCreationExceptionCases() ✔
+│  │  └─ test124_ArticleCreationExceptionCases() ✔
+│  ├─ Customer_100_FactoryCreate_Tests ✔
+│  │  ├─ test100_DataFactorySingleton() ✔
+│  │  ├─ test101_DefaultDataFactoryChainableSetters() ✔
+│  │  ├─ test110_DataFactoryCreateWithRegularFirstLastName() ✔
+│  │  ├─ test111_DataFactoryCreateWithRegularLastCommaFirstName() ✔
+│  │  ├─ test112_DataFactoryCreateWithRegularLastNameOnly() ✔
+│  │  ├─ test120_DataFactoryCreateWithCornerShortestPossibleFirstAndLastName() ✔
+│  │  ├─ test121_DataFactoryCreateWithLongFirstAndLastName() ✔
+│  │  ├─ test122_DataFactoryCreateWithLongFirstAndMultipartLastName() ✔
+│  │  ├─ test123_DataFactoryCreateWithLongMultipartLastNameAndFirstName() ✔
+│  │  ├─ test130_DataFactoryCreateWithEmptyName() ✔
+│  │  ├─ test131_DataFactoryCreateWithNullName() ✔
+│  │  ├─ test132_DataFactoryCreateWithEmptyContact() ✔
+│  │  ├─ test133_DataFactoryCreateWithNullContact() ✔
+│  │  ├─ test140_DataFactoryCreateInvalidName() ✔
+│  │  ├─ test150_DataFactoryCreateInvalidEmailContact() ✔
+│  │  └─ test160_DataFactoryCreateInvalidPhoneContact() ✔
+│  ├─ Article_300_Description_Tests ✔
+│  │  ├─ test300_ArticleDescriptionRegularCases() ✔
+│  │  ├─ test301_ArticleDescriptionRegularCases() ✔
+│  │  ├─ test310_ArticleDescriptionCornerCases() ✔
+│  │  ├─ test311_ArticleDescriptionCornerCases() ✔
+│  │  ├─ test320_ArticleDescriptionExceptionCases() ✔
+│  │  └─ test321_ArticleDescriptionExceptionCases() ✔
+│  ├─ Article_400_Price_Tests ✔
+│  │  ├─ test400_ArticlePriceRegularCases() ✔
+│  │  ├─ test401_ArticlePriceRegularCases() ✔
+│  │  ├─ test410_ArticlePriceCornerCases() ✔
+│  │  ├─ test411_ArticlePriceCornerCases() ✔
+│  │  ├─ test412_ArticlePriceCornerCases() ✔
+│  │  ├─ test420_ArticleDescriptionExceptionCases() ✔
+│  │  └─ test421_ArticleDescriptionExceptionCases() ✔
+│  ├─ Customer_200_Id_Tests ✔
+│  │  └─ test200_getId() ✔
+│  ├─ Customer_500_NameXXL_Tests ✔
+│  │  ├─ test500_getNameMultipartLastName() ✔
+│  │  ├─ test501_getNameMultipartLastName() ✔
+│  │  ├─ test502_getNameMultipartLastName() ✔
+│  │  ├─ test510_getNameDoubleFirstName() ✔
+│  │  ├─ test511_getNameDoubleFirstName() ✔
+│  │  ├─ test512_getNameDoubleFirstName() ✔
+│  │  ├─ test520_getNameMultipartFirstNames() ✔
+│  │  ├─ test521_getNameMultipartFirstNames() ✔
+│  │  ├─ test522_getNameMultipartFirstNames() ✔
+│  │  ├─ test530_getNameMultipartFirstNames() ✔
+│  │  ├─ test531_getNameMultipartNames() ✔
+│  │  ├─ test550_getNameMultiDashMultipartFirstNames() ✔
+│  │  ├─ test551_getNameMultiDashMultipartFirstNames() ✔
+│  │  ├─ test552_getNameMultipartNames() ✔
+│  │  ├─ test553_getNameMultiDashMultipartFirstNames() ✔
+│  │  ├─ test560_getNameExtremeLongNames() ✔
+│  │  ├─ test561_getNameExtremeLongNames() ✔
+│  │  └─ test562_getNameExtremeLongNames() ✔
+│  ├─ Article_200_Id_Tests ✔
+│  │  ├─ test200_ArticleIdPattern() ✔
+│  │  └─ test210_ArticleIdUniqueness() ✔
+│  ├─ Customer_300_Name_Tests ✔
+│  │  ├─ test300_getNameFirstAndLastName() ✔
+│  │  ├─ test301_getNameFirstAndLastName() ✔
+│  │  ├─ test302_getNameFirstAndLastName() ✔
+│  │  ├─ test303_getNameFirstAndLastName() ✔
+│  │  ├─ test310_getNameSingleName() ✔
+│  │  ├─ test311_getNameSingleName() ✔
+│  │  ├─ test312_getNameSingleName() ✔
+│  │  ├─ test313_getNameSingleName() ✔
+│  │  ├─ test320_getNameDoubleLastName() ✔
+│  │  ├─ test321_getNameDoubleLastName() ✔
+│  │  ├─ test322_getNameDoubleLastName() ✔
+│  │  ├─ test330_getNameSingleArgumentConstructor() ✔
+│  │  ├─ test331_getNameSingleArgumentConstructor() ✔
+│  │  ├─ test332_getNameSingleArgumentConstructor() ✔
+│  │  ├─ test333_getNameSingleArgumentConstructor() ✔
+│  │  ├─ test334_getNameSingleArgumentConstructor() ✔
+│  │  └─ test335_getNameSingleArgumentConstructor() ✔
+│  └─ Article_500_PriceVAT_Tests ✔
+│     ├─ test500_ArticleVATRateRegularCases() ✔
+│     ├─ test501_ArticleVATRateRegularCases() ✔
+│     ├─ test502_ArticleVATRateRegularCases() ✔
+│     └─ test510_ArticleVATRateExceptionCases() ✔
+├─ JUnit Vintage ✔
+└─ JUnit Platform Suite ✔
+
+Test run finished after 810 ms
+[        14 containers found      ]
+[         0 containers skipped    ]
+[        14 containers started    ]
+[         0 containers aborted    ]
+[        14 containers successful ]
+[         0 containers failed     ]
+[        92 tests found           ]
+[         0 tests skipped         ]
+[        92 tests started         ]
+[         0 tests aborted         ]
+[        92 tests successful      ]
+[         0 tests failed          ]
+
+done.

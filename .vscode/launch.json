@@ -8,6 +8,34 @@
             "type": "java",
             "name": "Application",
             "request": "launch",
+            "mainClass": "application.Application",
+            "projectName": "se1.bestellsystem_bcbb01b0"
+        },
+        {
+            "type": "java",
+            "name": "Application",
+            "request": "launch",
+            "mainClass": "src.application.Application",
+            "projectName": "se1.bestellsystem_bcbb01b0"
+        },
+        {
+            "type": "java",
+            "name": "Application_D12",
+            "request": "launch",
+            "mainClass": "Application_D12",
+            "projectName": "se1-bestellsystem_d7dc66b9"
+        },
+        {
+            "type": "java",
+            "name": "Application_D12",
+            "request": "launch",
+            "mainClass": "application.Application_D12",
+            "projectName": "se1-bestellsystem_d7dc66b9"
+        },
+        {
+            "type": "java",
+            "name": "Application",
+            "request": "launch",
             "mainClass": "se1.play/application.Runtime",
             "projectName": "se1.play",
             "vmArgs": "",
